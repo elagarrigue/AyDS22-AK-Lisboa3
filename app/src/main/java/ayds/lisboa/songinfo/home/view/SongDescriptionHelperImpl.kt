@@ -5,12 +5,14 @@ import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.home.model.entities.SpotifySong
 
 interface SongDescriptionHelper {
+    val songDescription:SongDescriptionDate
     fun getSongDescriptionText(song: Song = EmptySong): String
 }
 
-internal class SongDescriptionHelperImpl : SongDescriptionHelper {
+internal class SongDescriptionHelperImpl( override val songDescription:SongDescriptionDate) : SongDescriptionHelper {
+
     override fun getSongDescriptionText(song: Song): String {
-        val songDescription: SongDescriptionDate=SongDescriptionDateImpl()
+
         return when (song) {
             is SpotifySong ->
                 "${
