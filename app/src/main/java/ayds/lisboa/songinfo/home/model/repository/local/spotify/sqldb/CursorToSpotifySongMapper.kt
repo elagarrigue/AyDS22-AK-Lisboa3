@@ -25,7 +25,7 @@ internal class CursorToSpotifySongMapperImpl : CursorToSpotifySongMapper {
                       artistName = getString(getColumnIndexOrThrow(ARTIST_COLUMN)),
                       albumName = getString(getColumnIndexOrThrow(ALBUM_COLUMN)),
                       releaseDate = getString(getColumnIndexOrThrow(RELEASE_DATE_COLUMN)),
-                      releaseDatePrecision = spotifyReleaseDateMapper.mapReleaseDatePrecisionStringToEnum(getString(getColumnIndexOrThrow(RELEASE_DATE_PRECISION_COLUMN))),
+                      releaseDatePrecision = getSongReleaseDatePrecision(),
                       spotifyUrl = getString(getColumnIndexOrThrow(SPOTIFY_URL_COLUMN)),
                       imageUrl = getString(getColumnIndexOrThrow(IMAGE_URL_COLUMN)),
                     )
@@ -37,4 +37,13 @@ internal class CursorToSpotifySongMapperImpl : CursorToSpotifySongMapper {
             e.printStackTrace()
             null
         }
+
+    private fun Cursor.getSongReleaseDatePrecision() =
+        spotifyReleaseDateMapper.mapReleaseDatePrecisionStringToEnum(
+            getString(
+                getColumnIndexOrThrow(
+                    RELEASE_DATE_PRECISION_COLUMN
+                )
+            )
+        )
 }

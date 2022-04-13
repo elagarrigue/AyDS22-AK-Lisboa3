@@ -58,13 +58,16 @@ internal class SpotifyLocalStorageImpl(
             put(ARTIST_COLUMN, song.artistName)
             put(ALBUM_COLUMN, song.albumName)
             put(RELEASE_DATE_COLUMN, song.releaseDate)
-            put(RELEASE_DATE_PRECISION_COLUMN, spotifyReleaseDateMapper.mapReleaseDatePrecisionEnumToString(song.releaseDatePrecision))
+            put(RELEASE_DATE_PRECISION_COLUMN, getSongReleaseDate(song))
             put(SPOTIFY_URL_COLUMN, song.spotifyUrl)
             put(IMAGE_URL_COLUMN, song.imageUrl)
         }
 
         writableDatabase?.insert(SONGS_TABLE, null, values)
     }
+
+    private fun getSongReleaseDate(song: SpotifySong) =
+        spotifyReleaseDateMapper.mapReleaseDatePrecisionEnumToString(song.releaseDatePrecision)
 
     override fun getSongByTerm(term: String): SpotifySong? {
         val cursor = readableDatabase.query(
