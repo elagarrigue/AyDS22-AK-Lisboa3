@@ -8,19 +8,19 @@ interface SongDescriptionDate {
 }
 
 internal class SongDescriptionDateImpl : SongDescriptionDate {
-    override fun getReleaseDataByPrecision(song: Song): String {
+    override fun getReleaseDataByPrecision(song: Song,): String {
         return when(song.releaseDatePrecision){
-             "day" -> {
-                 getDateWithDayPrecision(song.releaseDate)
-             }
-             "month" -> {
-                 getDateWithMonthPrecision(song.releaseDate)
-             }
-             "year" -> {
-                 if(isLeapYear(song.releaseDate.toInt())){
-                     getDateWithYearPrecision(song.releaseDate) + " (a leap year)"
-                 } else {getDateWithYearPrecision(song.releaseDate) + " (not a leap year)"}
-             }
+            "day" -> {
+                getDateWithDayPrecision(song.releaseDate)
+            }
+            "month" -> {
+                getDateWithMonthPrecision(song.releaseDate)
+            }
+            "year" -> {
+                if(isLeapYear(song.releaseDate.toInt())){
+                    getDateWithYearPrecision(song.releaseDate) + " (a leap year)"
+                } else {getDateWithYearPrecision(song.releaseDate) + " (not a leap year)"}
+            }
 
             else -> {
                 "Date not found"
