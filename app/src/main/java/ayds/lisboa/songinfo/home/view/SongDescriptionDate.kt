@@ -1,6 +1,7 @@
 package ayds.lisboa.songinfo.home.view
 
 import ayds.lisboa.songinfo.home.model.entities.EmptySong
+import ayds.lisboa.songinfo.home.model.entities.ReleaseDatePrecision
 import ayds.lisboa.songinfo.home.model.entities.Song
 
 interface SongDescriptionDate {
@@ -10,13 +11,13 @@ interface SongDescriptionDate {
 internal class SongDescriptionDateImpl : SongDescriptionDate {
     override fun getReleaseDataByPrecision(song: Song): String {
         return when(song.releaseDatePrecision){
-             "day" -> {
+             ReleaseDatePrecision.DAY -> {
                  getDateWithDayPrecision(song.releaseDate)
              }
-             "month" -> {
+             ReleaseDatePrecision.MONTH -> {
                  getDateWithMonthPrecision(song.releaseDate)
              }
-             "year" -> {
+             ReleaseDatePrecision.YEAR -> {
                  if(isLeapYear(song.releaseDate.toInt())){
                      getDateWithYearPrecision(song.releaseDate) + " (a leap year)"
                  } else {getDateWithYearPrecision(song.releaseDate) + " (not a leap year)"}

@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.home.model.entities.SpotifySong
+import ayds.lisboa.songinfo.home.model.repository.SpotifyHelperInjector
+import ayds.lisboa.songinfo.home.model.repository.SpotifyReleaseDateMapper
 import ayds.lisboa.songinfo.home.model.repository.local.spotify.SpotifyLocalStorage
 
 private const val DATABASE_VERSION = 1
@@ -27,6 +29,8 @@ internal class SpotifyLocalStorageImpl(
         SPOTIFY_URL_COLUMN,
         IMAGE_URL_COLUMN
     )
+
+    private val spotifyReleaseDateMapper: SpotifyReleaseDateMapper = SpotifyHelperInjector.spotifyReleaseDateMapper
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createSongsTableQuery)
@@ -54,7 +58,7 @@ internal class SpotifyLocalStorageImpl(
             put(ARTIST_COLUMN, song.artistName)
             put(ALBUM_COLUMN, song.albumName)
             put(RELEASE_DATE_COLUMN, song.releaseDate)
-            put(RELEASE_DATE_PRECISION_COLUMN, song.releaseDatePrecision)
+            put(RELEASE_DATE_PRECISION_COLUMN, spotifyReleaseDateMapper.mapReleaseDatePrecisionEnumToString(song.releaseDatePrecision))
             put(SPOTIFY_URL_COLUMN, song.spotifyUrl)
             put(IMAGE_URL_COLUMN, song.imageUrl)
         }
