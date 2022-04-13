@@ -18,9 +18,7 @@ internal class SongDescriptionDateImpl : SongDescriptionDate {
                  getDateWithMonthPrecision(song.releaseDate)
              }
              ReleaseDatePrecision.YEAR -> {
-                 if(isLeapYear(song.releaseDate.toInt())){
-                     getDateWithYearPrecision(song.releaseDate) + " (a leap year)"
-                 } else {getDateWithYearPrecision(song.releaseDate) + " (not a leap year)"}
+                 getDateWithYearPrecision(song)
              }
 
             else -> {
@@ -41,9 +39,17 @@ internal class SongDescriptionDateImpl : SongDescriptionDate {
         return months[arrayDate[1].toInt()-1]+", " +arrayDate[0]
     }
 
+    private fun getDateWithYearPrecision(song: Song): String {
+        return if (isLeapYear(song.releaseDate.toInt())) {
+            getYear(song.releaseDate) + " (a leap year)"
+        } else {
+            getYear(song.releaseDate) + " (not a leap year)"
+        }
+    }
+
     private fun isLeapYear(n: Int) = (n % 4 == 0) && (n % 100 != 0 || n % 400 == 0)
 
-    private fun getDateWithYearPrecision(date: String): String {
+    private fun getYear(date: String): String {
         return date.split("-").first()
     }
 }
