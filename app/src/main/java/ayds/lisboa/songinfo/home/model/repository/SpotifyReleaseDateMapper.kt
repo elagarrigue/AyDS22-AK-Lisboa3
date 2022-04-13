@@ -5,7 +5,7 @@ import java.lang.IllegalArgumentException
 
 interface SpotifyReleaseDateMapper {
     fun mapReleaseDatePrecisionStringToEnum(releaseDatePrecisionString: String): ReleaseDatePrecision
-    fun mapReleaseDatePrecisionEnumToString(releaseDatePrecisionEnum: ReleaseDatePrecision): String
+
 }
 
 internal class SpotifyReleaseDateMapperImpl: SpotifyReleaseDateMapper {
@@ -16,10 +16,6 @@ internal class SpotifyReleaseDateMapperImpl: SpotifyReleaseDateMapper {
         } catch (exception: IllegalArgumentException) {
             ReleaseDatePrecision.UNDEFINED
         }
-    }
-
-    override fun mapReleaseDatePrecisionEnumToString(releaseDatePrecisionEnum: ReleaseDatePrecision): String {
-        return releaseDatePrecisionEnum.toString()
     }
 
 
