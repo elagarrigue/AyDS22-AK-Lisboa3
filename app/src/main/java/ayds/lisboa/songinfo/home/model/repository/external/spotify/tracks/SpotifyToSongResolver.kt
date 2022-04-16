@@ -24,9 +24,7 @@ private const val URL = "url"
 private const val EXTERNAL_URL = "external_urls"
 private const val SPOTIFY = "spotify"
 
-internal class JsonToSongResolver : SpotifyToSongResolver {
-
-    private val spotifyReleaseDateMapper: SpotifyReleaseDateMapper = SpotifyHelperInjector.spotifyReleaseDateMapper
+internal class JsonToSongResolver(private val spotifyReleaseDateMapper: SpotifyReleaseDateMapper) : SpotifyToSongResolver {
 
     override fun getSongFromExternalData(serviceData: String?): SpotifySong? =
         try {

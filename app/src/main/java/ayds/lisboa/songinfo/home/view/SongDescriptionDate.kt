@@ -9,6 +9,10 @@ interface SongDescriptionDate {
 }
 
 internal class SongDescriptionDateImpl : SongDescriptionDate {
+
+    private val months = arrayOf("January","February","March","April","May","June","July","August",
+        "September","October","November","December")
+
     override fun getReleaseDataByPrecision(song: Song): String {
         return when(song.releaseDatePrecision){
              ReleaseDatePrecision.DAY -> {
@@ -29,14 +33,19 @@ internal class SongDescriptionDateImpl : SongDescriptionDate {
 
     private fun getDateWithDayPrecision(date: String): String {
         val arrayDate = date.split("-")
-        return arrayDate[2] +"/"+ arrayDate[1]+"/" +arrayDate[0]
+        val day = arrayDate[2]
+        val month = arrayDate[1]
+        val year = arrayDate[0]
+
+        return "$day/$month/$year"
     }
 
     private fun getDateWithMonthPrecision(date: String): String {
         val arrayDate = date.split("-")
-        val months = arrayOf("January","February","March","April","May","June","July","August","September","October","November","December")
+        val month = months[arrayDate[1].toInt()-1]
+        val year = arrayDate[0]
 
-        return months[arrayDate[1].toInt()-1]+", " +arrayDate[0]
+        return "$month, $year"
     }
 
     private fun getDateWithYearPrecision(song: Song): String {
@@ -53,9 +62,3 @@ internal class SongDescriptionDateImpl : SongDescriptionDate {
         return date.split("-").first()
     }
 }
-
-
-
-
-
-
