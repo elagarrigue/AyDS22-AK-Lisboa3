@@ -106,7 +106,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
             cursor.apply {
                 return if (moveToNext()) {
                     val info = getString(
-                        getColumnIndexOrThrow("$INFO_COLUMN")
+                        getColumnIndexOrThrow(INFO_COLUMN)
                     )
                     close()
                     info
