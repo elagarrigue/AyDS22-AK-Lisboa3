@@ -6,12 +6,9 @@ import android.os.Bundle
 import ayds.lisboa.songinfo.R
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import ayds.lisboa.songinfo.moredetails.fulllogic.LastFMAPI
-import ayds.lisboa.songinfo.moredetails.fulllogic.DataBase
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonElement
-import ayds.lisboa.songinfo.moredetails.fulllogic.OtherInfoWindow
 import android.content.Intent
 import android.net.Uri
 import com.squareup.picasso.Picasso
@@ -22,35 +19,42 @@ import android.widget.ImageView
 import retrofit2.Response
 import java.io.IOException
 import java.lang.StringBuilder
+import java.util.*
+
+private const val ARTIST ="artist"
+private const val ARTIST_NAME ="artistName"
+private const val BIO ="bio"
+private const val CONTENT ="content"
+private const val URL ="url"
+
 
 class OtherInfoWindow : AppCompatActivity() {
-    private var textPane2: TextView? = null
 
-    //private JPanel imagePanel;
-    // private JLabel posterImageLabel;
+    private var descriptionSongPane: TextView? = null
+    private var dataBase: DataBase? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        textPane2 = findViewById(R.id.textPane2)
-        open(intent.getStringExtra("artistName"))
+        descriptionSongPane = findViewById(R.id.textPane2)
+        open(intent.getStringExtra(ARTIST_NAME))
     }
 
-    fun getArtistInfo(artistName: String?) {
+    private fun getArtistInfo(artistName: String?) {
 
-        // create
         val retrofit = createRetrofit()
-
         val lastFMAPI = retrofit.create(LastFMAPI::class.java)
 
         Log.e("TAG", "artistName $artistName")
 
         Thread {
 
-            var text = DataBase.getInfo(dataBase!!, artistName!!)
-            if (text != null) { // exists in db
-                text = "[*]$text"
+            var textArtistInfo = DataBase.getInfo(dataBase!!, artistName!!)
 
-            } else { // get from service
+            if (textArtistInfo != null) {
+                textArtistInfo = "[*]$textArtistInfo"
+
+            } else {
                 val callResponse: Response<String>
                 try {
                     callResponse = lastFMAPI.getArtistInfo(artistName).execute()
@@ -58,20 +62,18 @@ class OtherInfoWindow : AppCompatActivity() {
 
                     val gson = Gson()
                     val jobj = gson.fromJson(callResponse.body(), JsonObject::class.java)
-                    val artist = jobj["artist"].asJsonObject
-                    val bio = artist["bio"].asJsonObject
-                    val extract = bio["content"]
-                    val url = artist["url"]
+                    val artist = jobj[ARTIST].asJsonObject
+                    val bio = artist[BIO].asJsonObject
+                    val extract = bio[CONTENT]
+                    val url = artist[URL]
 
                     if (extract == null) {
-                        text = "No Results"
+                        textArtistInfo = "No Results"
                     } else {
-                        text = extract.asString.replace("\\n", "\n")
-                        text = textToHtml(text, artistName)
+                        textArtistInfo = extract.asString.replace("\\n", "\n")
+                        textArtistInfo = textToHtml(textArtistInfo, artistName)
 
-
-                        // save to DB  <o/
-                        DataBase.saveArtist(dataBase!!, artistName, text)
+                        DataBase.saveArtist(dataBase!!, artistName, textArtistInfo)
                     }
 
                     openUrlButtonListener(url)
@@ -81,11 +83,10 @@ class OtherInfoWindow : AppCompatActivity() {
                     e1.printStackTrace()
                 }
             }
-            imageLoaderLastfm(text)
+            imageLoaderLastfm(textArtistInfo)
         }.start()
     }
 
-    /** Refactor1 **/
     private fun createRetrofit(): Retrofit {
          return Retrofit.Builder()
             .baseUrl("https://ws.audioscrobbler.com/2.0/")
@@ -93,7 +94,6 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
-    /** Refactor2 **/
     private fun openUrlButtonListener(url: JsonElement){
         val urlString = url.asString
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
@@ -107,14 +107,12 @@ class OtherInfoWindow : AppCompatActivity() {
         val imageUrl =
             "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
         Log.e("TAG", "Get Image from $imageUrl")
-        val finalText = text
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            textPane2!!.text = Html.fromHtml(finalText)
+            descriptionSongPane!!.text = Html.fromHtml(text)
         }
     }
 
-    private var dataBase: DataBase? = null
     private fun open(artist: String?) {
         dataBase = DataBase(this)
         DataBase.saveArtist(dataBase!!, "test", "sarasa")
@@ -125,18 +123,27 @@ class OtherInfoWindow : AppCompatActivity() {
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
+
         fun textToHtml(text: String, term: String?): String {
+
             val builder = StringBuilder()
             builder.append("<html><div width=400>")
             builder.append("<font face=\"arial\">")
-            val textWithBold = text
-                .replace("'", " ")
-                .replace("\n", "<br>")
-                .replace("(?i)" + term!!.toRegex(), "<b>" + term.toUpperCase() + "</b>")
+
+            var auxText = text
+            val textWithBold = getTextWithBold(auxText,term)
+
             builder.append(textWithBold)
             builder.append("</font></div></html>")
+
             return builder.toString()
         }
-    }
 
+        private fun getTextWithBold(text: String, term: String?): String {
+            return text
+                .replace("'", " ")
+                .replace("\n", "<br>")
+                .replace("(?i)" + term!!.toRegex(), "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
+        }
+    }
 }
