@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.home.model.entities.SpotifySong
+import ayds.lisboa.songinfo.home.model.repository.SpotifyHelperInjector
+import ayds.lisboa.songinfo.home.model.repository.SpotifyReleaseDateMapper
 import ayds.lisboa.songinfo.home.model.repository.local.spotify.SpotifyLocalStorage
 
 private const val DATABASE_VERSION = 1
@@ -23,6 +25,7 @@ internal class SpotifyLocalStorageImpl(
         ALBUM_COLUMN,
         ALBUM_COLUMN,
         RELEASE_DATE_COLUMN,
+        RELEASE_DATE_PRECISION_COLUMN,
         SPOTIFY_URL_COLUMN,
         IMAGE_URL_COLUMN
     )
@@ -53,6 +56,7 @@ internal class SpotifyLocalStorageImpl(
             put(ARTIST_COLUMN, song.artistName)
             put(ALBUM_COLUMN, song.albumName)
             put(RELEASE_DATE_COLUMN, song.releaseDate)
+            put(RELEASE_DATE_PRECISION_COLUMN, song.releaseDatePrecision.ordinal)
             put(SPOTIFY_URL_COLUMN, song.spotifyUrl)
             put(IMAGE_URL_COLUMN, song.imageUrl)
         }

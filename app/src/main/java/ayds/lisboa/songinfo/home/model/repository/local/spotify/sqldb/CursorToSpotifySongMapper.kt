@@ -1,7 +1,10 @@
 package ayds.lisboa.songinfo.home.model.repository.local.spotify.sqldb
 
 import android.database.Cursor
+import ayds.lisboa.songinfo.home.model.entities.ReleaseDatePrecision
 import ayds.lisboa.songinfo.home.model.entities.SpotifySong
+import ayds.lisboa.songinfo.home.model.repository.SpotifyHelperInjector
+import ayds.lisboa.songinfo.home.model.repository.SpotifyReleaseDateMapper
 import java.sql.SQLException
 
 interface CursorToSpotifySongMapper {
@@ -21,6 +24,7 @@ internal class CursorToSpotifySongMapperImpl : CursorToSpotifySongMapper {
                       artistName = getString(getColumnIndexOrThrow(ARTIST_COLUMN)),
                       albumName = getString(getColumnIndexOrThrow(ALBUM_COLUMN)),
                       releaseDate = getString(getColumnIndexOrThrow(RELEASE_DATE_COLUMN)),
+                      releaseDatePrecision = getSongReleaseDatePrecision(),
                       spotifyUrl = getString(getColumnIndexOrThrow(SPOTIFY_URL_COLUMN)),
                       imageUrl = getString(getColumnIndexOrThrow(IMAGE_URL_COLUMN)),
                     )
@@ -32,4 +36,13 @@ internal class CursorToSpotifySongMapperImpl : CursorToSpotifySongMapper {
             e.printStackTrace()
             null
         }
+
+    private fun Cursor.getSongReleaseDatePrecision() =
+        ReleaseDatePrecision.values()[
+            getInt(
+                getColumnIndexOrThrow(
+                    RELEASE_DATE_PRECISION_COLUMN
+                )
+            )
+        ]
 }
