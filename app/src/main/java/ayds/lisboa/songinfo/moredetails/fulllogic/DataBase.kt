@@ -2,14 +2,13 @@ package ayds.lisboa.songinfo.moredetails.fulllogic
 
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
-import ayds.lisboa.songinfo.moredetails.fulllogic.DataBase
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.util.Log
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-import java.util.ArrayList
 
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1
@@ -87,35 +86,34 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         }
 
         fun getInfo(dbHelper: DataBase, artist: String): String? {
+            return getFirstInfoRow(getCursorForArtists(dbHelper, artist))
+        }
+
+        private fun getCursorForArtists(dbHelper: DataBase, artist: String): Cursor {
             val db = dbHelper.readableDatabase
-
-            // Define a projection that specifies which columns from the database
-            // you will actually use after this query.
-
-            // Filter results WHERE "title" = 'My Title'
-            val selection = "artist  = ?"
-            val selectionArgs = arrayOf(artist)
-
-        // How you want the results sorted in the resulting Cursor
-            val sortOrder = "artist DESC"
-            val cursor = db.query(
-                "artists",  // The table to query
-                projection,  // The array of columns to return (pass null to get all)
-                selection,  // The columns for the WHERE clause
-                selectionArgs,  // The values for the WHERE clause
-                null,  // don't group the rows
-                null,  // don't filter by row groups
-                sortOrder // The sort order
+            return db.query(
+                ARTISTS_TABLE,
+                projection,
+                "$ARTIST_COLUMN = ?",
+                arrayOf(artist),
+                null,
+                null,
+                "$ARTIST_COLUMN DESC"
             )
-            val items: MutableList<String> = ArrayList()
-            while (cursor.moveToNext()) {
-                val info = cursor.getString(
-                    cursor.getColumnIndexOrThrow("info")
-                )
-                items.add(info)
+        }
+
+        private fun getFirstInfoRow(cursor: Cursor): String? {
+            cursor.apply {
+                return if (moveToNext()) {
+                    val info = getString(
+                        getColumnIndexOrThrow("$INFO_COLUMN")
+                    )
+                    close()
+                    info
+                } else
+                    null
             }
-            cursor.close()
-            return if (items.isEmpty()) null else items[0]
+
         }
     }
 }
