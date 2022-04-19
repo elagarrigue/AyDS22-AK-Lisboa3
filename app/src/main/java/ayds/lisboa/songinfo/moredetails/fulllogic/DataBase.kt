@@ -11,6 +11,9 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.ArrayList
 
+const val DATABASE_NAME = "dictionary.db"
+const val DATABASE_VERSION = 1
+
 const val ARTISTS_TABLE = "artists"
 const val ID_COLUMN = "id"
 const val ARTIST_COLUMN = "artist"
@@ -24,7 +27,8 @@ const val createArtistTableQuery: String =
             "$INFO_COLUMN string, " +
             "$SOURCE_COLUMN integer)"
 
-class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", null, 1) {
+class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createArtistTableQuery)
         Log.i("DB", "DB created")
@@ -33,6 +37,13 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
     companion object {
+
+        private val projection = arrayOf(
+            "id",
+            "artist",
+            "info"
+        )
+
         fun testDB() {
             var connection: Connection? = null
             try {
@@ -41,10 +52,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
                 val statement = connection.createStatement()
                 statement.queryTimeout = 30 // set timeout to 30 sec.
 
-                //statement.executeUpdate("drop table if exists person");
-                //statement.executeUpdate("create table person (id integer, name string)");
-                //statement.executeUpdate("insert into person values(1, 'leo')");
-                //statement.executeUpdate("insert into person values(2, 'yui')");
                 val rs = statement.executeQuery("select * from artists")
                 while (rs.next()) {
                     // read the result set
@@ -86,11 +93,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
 
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
-            val projection = arrayOf(
-                "id",
-                "artist",
-                "info"
-            )
 
 // Filter results WHERE "title" = 'My Title'
             val selection = "artist  = ?"
