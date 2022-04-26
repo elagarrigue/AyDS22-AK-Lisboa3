@@ -29,10 +29,14 @@ private const val URL ="url"
 
 class OtherInfoWindow : AppCompatActivity() {
 
-    private val imageUrl =
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+    companion object{
+        const val ARTIST_NAME_EXTRA = "artistName"
+    }
+
     private var descriptionSongPane: TextView? = null
     private var dataBase: DataBase? = null
+    private val imageUrl =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,27 +45,30 @@ class OtherInfoWindow : AppCompatActivity() {
         open(intent.getStringExtra(ARTIST_NAME))
     }
 
+    private fun open(artist: String?) {
+        dataBase = DataBase(this)
+        getArtistInfo(artist)
+    }
+
     private fun getArtistInfo(artistName: String?) {
 
-        Log.e("TAG", "artistName $artistName")
-
         Thread {
+            var textArtistInfo = getInfoFromDatabase(artistName)
 
-            var textArtistInfo = DataBase.getInfo(dataBase!!, artistName!!)
+            textArtistInfo =
+                if(isInDataBase(textArtistInfo))
+                    "[*]$textArtistInfo"
+                else getInfoFromService(artistName)
 
-            textArtistInfo = if(isInDataBase(textArtistInfo)) {
-                "[*]$textArtistInfo"
-
-            } else {
-                getInfo(artistName)
-            }
             imageLoaderLastfm(textArtistInfo)
         }.start()
     }
 
     private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
 
-    private fun getInfo(artistName: String?): String?{
+    private fun getInfoFromDatabase(artistName: String?) = DataBase.getInfo(dataBase!!, artistName!!)
+
+    private fun getInfoFromService(artistName: String?): String{
 
         var textArtistInfo = ""
 
@@ -75,7 +82,6 @@ class OtherInfoWindow : AppCompatActivity() {
                 textArtistInfo = "No Results"
             } else {
                 textArtistInfo = setArtistBio(artistBio, artistName)
-
                 DataBase.saveArtist(dataBase!!, artistName, textArtistInfo)
             }
 
@@ -103,15 +109,15 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
-    private fun getArtist(jobj: JsonObject): JsonObject = jobj[ARTIST].asJsonObject
-
     private fun getBiography(jobj: JsonObject): JsonElement{
         val artistBio = getArtist(jobj)[BIO].asJsonObject
         return artistBio[CONTENT]
     }
 
+    private fun getArtist(jobj: JsonObject): JsonObject = jobj[ARTIST].asJsonObject
+
     private fun setArtistBio(artistBio: JsonElement, artistName: String?): String {
-        var textArtistInfo = artistBio.asString.replace("\\n", "\n")
+        val textArtistInfo = artistBio.asString.replace("\\n", "\n")
         return textToHtml(textArtistInfo, artistName)
     }
 
@@ -121,52 +127,43 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun openUrlButtonListener(url: JsonElement){
         val urlString = url.asString
+
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(urlString)
-            startActivity(intent)
+            startActivity(getIntent(urlString))
         }
     }
 
+    private fun getIntent(urlString: String): Intent{
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(urlString)
+        return intent
+    }
+
     private fun imageLoaderLastfm(text: String?){
-        Log.e("TAG", "Get Image from $imageUrl")
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
             descriptionSongPane!!.text = Html.fromHtml(text)
         }
     }
 
-    private fun open(artist: String?) {
-        dataBase = DataBase(this)
-        DataBase.saveArtist(dataBase!!, "test", "sarasa")
-        Log.e("TAG", "" + DataBase.getInfo(dataBase!!, "test"))
-        Log.e("TAG", "" + DataBase.getInfo(dataBase!!, "nada"))
-        getArtistInfo(artist)
-    }
+    private fun textToHtml(text: String, term: String?): String {
 
-    companion object {
-        const val ARTIST_NAME_EXTRA = "artistName"
+        val builder = StringBuilder()
+        builder.append("<html><div width=400>")
+        builder.append("<font face=\"arial\">")
 
-        fun textToHtml(text: String, term: String?): String {
+        val textWithBold = getTextWithBold(text, term)
+        builder.append(textWithBold)
+        builder.append("</font></div></html>")
 
-            val builder = StringBuilder()
-            builder.append("<html><div width=400>")
-            builder.append("<font face=\"arial\">")
-
-            var auxText = text
-            val textWithBold = getTextWithBold(auxText,term)
-
-            builder.append(textWithBold)
-            builder.append("</font></div></html>")
-
-            return builder.toString()
+        return builder.toString()
         }
 
-        private fun getTextWithBold(text: String, term: String?): String {
-            return text
-                .replace("'", " ")
-                .replace("\n", "<br>")
-                .replace("(?i)" + term!!.toRegex(), "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
+    private fun getTextWithBold(text: String, term: String?): String {
+        return text
+            .replace("'", " ")
+            .replace("\n", "<br>")
+            .replace("(?i)" + term!!.toRegex(), "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
         }
-    }
+
 }
