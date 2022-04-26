@@ -43,36 +43,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
             "info"
         )
 
-        fun testDB() {
-            var connection: Connection? = null
-            try {
-                // create a database connection
-                connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db")
-                val statement = connection.createStatement()
-                statement.queryTimeout = 30 // set timeout to 30 sec.
-
-                val rs = statement.executeQuery("select * from artists")
-                while (rs.next()) {
-                    // read the result set
-                    println("id = " + rs.getInt("id"))
-                    println("artist = " + rs.getString("artist"))
-                    println("info = " + rs.getString("info"))
-                    println("source = " + rs.getString("source"))
-                }
-            } catch (e: SQLException) {
-                // if the error message is "out of memory",
-                // it probably means no database file is found
-                System.err.println(e.message)
-            } finally {
-                try {
-                    connection?.close()
-                } catch (e: SQLException) {
-                    // connection close failed.
-                    System.err.println(e)
-                }
-            }
-        }
-
         fun saveArtist(dbHelper: DataBase, artist: String?, info: String?) {
             val db = dbHelper.writableDatabase
 
