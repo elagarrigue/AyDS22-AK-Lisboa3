@@ -47,7 +47,7 @@ class DataBase(context: Context?) :
         writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
 
-    fun getInfo(artist: String): String? {
+    fun getArtistInfo(artist: String): String? {
         return getFirstInfoRow(getCursorForArtists(artist))
     }
 

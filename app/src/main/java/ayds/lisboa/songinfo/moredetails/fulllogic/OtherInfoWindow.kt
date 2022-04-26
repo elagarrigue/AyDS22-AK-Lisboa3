@@ -66,7 +66,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
 
-    private fun getInfoFromDatabase(artistName: String?) = dataBase?.getInfo(artistName!!)
+    private fun getInfoFromDatabase(artistName: String?) = dataBase?.getArtistInfo(artistName!!)
 
     private fun getInfoFromService(artistName: String?): String{
 
