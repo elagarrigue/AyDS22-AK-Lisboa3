@@ -5,10 +5,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.util.Log
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.SQLException
 
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1
@@ -31,7 +27,6 @@ class DataBase(context: Context?) :
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createArtistTableQuery)
-        Log.i("DB", "DB created")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
@@ -43,7 +38,6 @@ class DataBase(context: Context?) :
     )
 
     fun saveArtist(artist: String?, info: String?) {
-
         val values = ContentValues().apply {
             put(ARTIST_COLUMN, artist)
             put(INFO_COLUMN, info)
@@ -80,7 +74,6 @@ class DataBase(context: Context?) :
             } else
                 null
         }
-
     }
 
 }
