@@ -66,7 +66,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
 
-    private fun getInfoFromDatabase(artistName: String?) = DataBase.getInfo(dataBase!!, artistName!!)
+    private fun getInfoFromDatabase(artistName: String?) = dataBase?.getInfo(artistName!!)
 
     private fun getInfoFromService(artistName: String?): String{
 
@@ -82,7 +82,7 @@ class OtherInfoWindow : AppCompatActivity() {
                 textArtistInfo = "No Results"
             } else {
                 textArtistInfo = setArtistBio(artistBio, artistName)
-                DataBase.saveArtist(dataBase!!, artistName, textArtistInfo)
+                dataBase?.saveArtist(artistName, textArtistInfo)
             }
 
             val url = getUrl(jobj)

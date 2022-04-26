@@ -26,7 +26,8 @@ const val createArtistTableQuery: String =
             "$INFO_COLUMN string, " +
             "$SOURCE_COLUMN integer)"
 
-class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DataBase(context: Context?) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createArtistTableQuery)
@@ -35,55 +36,51 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    companion object {
+    private val projection = arrayOf(
+        "id",
+        "artist",
+        "info"
+    )
 
-        private val projection = arrayOf(
-            "id",
-            "artist",
-            "info"
-        )
+    fun saveArtist(artist: String?, info: String?) {
 
-        fun saveArtist(dbHelper: DataBase, artist: String?, info: String?) {
-            val db = dbHelper.writableDatabase
-
-            val values = ContentValues().apply {
-                put(ARTIST_COLUMN, artist)
-                put(INFO_COLUMN, info)
-                put(SOURCE_COLUMN, 1)
-            }
-
-            db.insert(ARTISTS_TABLE, null, values)
+        val values = ContentValues().apply {
+            put(ARTIST_COLUMN, artist)
+            put(INFO_COLUMN, info)
+            put(SOURCE_COLUMN, 1)
         }
 
-        fun getInfo(dbHelper: DataBase, artist: String): String? {
-            return getFirstInfoRow(getCursorForArtists(dbHelper, artist))
-        }
-
-        private fun getCursorForArtists(dbHelper: DataBase, artist: String): Cursor {
-            val db = dbHelper.readableDatabase
-            return db.query(
-                ARTISTS_TABLE,
-                projection,
-                "$ARTIST_COLUMN = ?",
-                arrayOf(artist),
-                null,
-                null,
-                "$ARTIST_COLUMN DESC"
-            )
-        }
-
-        private fun getFirstInfoRow(cursor: Cursor): String? {
-            cursor.apply {
-                return if (moveToNext()) {
-                    val info = getString(
-                        getColumnIndexOrThrow(INFO_COLUMN)
-                    )
-                    close()
-                    info
-                } else
-                    null
-            }
-
-        }
+        writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
+
+    fun getInfo(artist: String): String? {
+        return getFirstInfoRow(getCursorForArtists(artist))
+    }
+
+    private fun getCursorForArtists(artist: String): Cursor {
+        return readableDatabase.query(
+            ARTISTS_TABLE,
+            projection,
+            "$ARTIST_COLUMN = ?",
+            arrayOf(artist),
+            null,
+            null,
+            "$ARTIST_COLUMN DESC"
+        )
+    }
+
+    private fun getFirstInfoRow(cursor: Cursor): String? {
+        cursor.apply {
+            return if (moveToNext()) {
+                val info = getString(
+                    getColumnIndexOrThrow(INFO_COLUMN)
+                )
+                close()
+                info
+            } else
+                null
+        }
+
+    }
+
 }
