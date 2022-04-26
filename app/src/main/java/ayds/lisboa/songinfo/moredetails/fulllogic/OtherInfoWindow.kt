@@ -1,5 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import android.os.Bundle
@@ -21,15 +22,15 @@ import java.io.IOException
 import java.lang.StringBuilder
 import java.util.*
 
-private const val ARTIST ="artist"
-private const val ARTIST_NAME ="artistName"
-private const val BIO ="bio"
-private const val CONTENT ="content"
-private const val URL ="url"
+private const val ARTIST = "artist"
+private const val ARTIST_NAME = "artistName"
+private const val BIO = "bio"
+private const val CONTENT = "content"
+private const val URL = "url"
 
 class OtherInfoWindow : AppCompatActivity() {
 
-    companion object{
+    companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
 
@@ -56,7 +57,7 @@ class OtherInfoWindow : AppCompatActivity() {
             var textArtistInfo = getInfoFromDatabase(artistName)
 
             textArtistInfo =
-                if(isInDataBase(textArtistInfo))
+                if (isInDataBase(textArtistInfo))
                     "[*]$textArtistInfo"
                 else getInfoFromService(artistName)
 
@@ -68,14 +69,12 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getInfoFromDatabase(artistName: String?) = dataBase?.getArtistInfo(artistName!!)
 
-    private fun getInfoFromService(artistName: String?): String{
+    private fun getInfoFromService(artistName: String?): String {
 
         var textArtistInfo = ""
 
         try {
-
-            val gson = Gson()
-            val jobj = gson.fromJson(getCallResponse(artistName).body(), JsonObject::class.java)
+            val jobj = getJsonInfo(artistName)
             val artistBio = getBiography(jobj)
 
             if (!existBiography(artistBio)) {
@@ -85,8 +84,7 @@ class OtherInfoWindow : AppCompatActivity() {
                 dataBase?.saveArtist(artistName, textArtistInfo)
             }
 
-            val url = getUrl(jobj)
-            openUrlButtonListener(url)
+            openUrlButtonListener(getUrl(jobj))
 
         } catch (e1: IOException) {
             Log.e("TAG", "Error $e1")
@@ -96,7 +94,12 @@ class OtherInfoWindow : AppCompatActivity() {
         return textArtistInfo
     }
 
-    private fun getCallResponse(artistName: String?):Response<String>{
+    private fun getJsonInfo(artistName: String?): JsonObject {
+        val gson = Gson()
+        return gson.fromJson(getCallResponse(artistName).body(), JsonObject::class.java)
+    }
+
+    private fun getCallResponse(artistName: String?): Response<String> {
         return getLastFMAPI().getArtistInfo(artistName).execute()
     }
 
@@ -109,7 +112,7 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
-    private fun getBiography(jobj: JsonObject): JsonElement{
+    private fun getBiography(jobj: JsonObject): JsonElement {
         val artistBio = getArtist(jobj)[BIO].asJsonObject
         return artistBio[CONTENT]
     }
@@ -123,9 +126,9 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getUrl(jobj: JsonObject): JsonElement = getArtist(jobj)[URL]
 
-    private fun existBiography(artistBio : JsonElement): Boolean = artistBio != null
+    private fun existBiography(artistBio: JsonElement?): Boolean = artistBio != null
 
-    private fun openUrlButtonListener(url: JsonElement){
+    private fun openUrlButtonListener(url: JsonElement) {
         val urlString = url.asString
 
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
@@ -133,37 +136,41 @@ class OtherInfoWindow : AppCompatActivity() {
         }
     }
 
-    private fun getIntent(urlString: String): Intent{
+    private fun getIntent(urlString: String): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
         return intent
     }
 
-    private fun imageLoaderLastfm(text: String?){
+    @SuppressLint("NewApi")
+    private fun imageLoaderLastfm(text: String?) {
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            descriptionSongPane!!.text = Html.fromHtml(text)
+            descriptionSongPane!!.text = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
         }
     }
 
     private fun textToHtml(text: String, term: String?): String {
 
         val builder = StringBuilder()
-        builder.append("<html><div width=400>")
-        builder.append("<font face=\"arial\">")
-
-        val textWithBold = getTextWithBold(text, term)
-        builder.append(textWithBold)
-        builder.append("</font></div></html>")
-
-        return builder.toString()
+        builder.apply {
+            append("<html><div width=400>")
+            append("<font face=\"arial\">")
         }
+        val textWithBold = getTextWithBold(text, term)
+        builder.apply {
+            append(textWithBold)
+            append("</font></div></html>")
+        }
+        return builder.toString()
+    }
 
     private fun getTextWithBold(text: String, term: String?): String {
         return text
             .replace("'", " ")
             .replace("\n", "<br>")
-            .replace("(?i)" + term!!.toRegex(), "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
-        }
+            .replace("(?i)" + term!!.toRegex(),
+                "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
+    }
 
 }
