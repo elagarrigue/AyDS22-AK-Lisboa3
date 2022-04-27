@@ -12,12 +12,10 @@ import com.google.gson.JsonElement
 import android.content.Intent
 import android.net.Uri
 import com.squareup.picasso.Picasso
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.text.HtmlCompat
 import retrofit2.Response
-import java.io.IOException
 import java.lang.StringBuilder
 import java.util.*
 
@@ -53,15 +51,18 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfo(artistName: String?) {
 
         Thread {
-            var textArtistInfo = getInfoFromDatabase(artistName)
-
-            textArtistInfo =
-                if (isInDataBase(textArtistInfo))
-                    "[*]$textArtistInfo"
-                else getInfoFromService(artistName)
-
-            imageLoaderLastfm(textArtistInfo)
+            imageLoaderLastfm(getInfoFromDataBaseOrService(artistName))
         }.start()
+    }
+
+    private fun getInfoFromDataBaseOrService(artistName: String?): String {
+
+        val textArtistInfo = getInfoFromDatabase(artistName)
+
+        return if (isInDataBase(textArtistInfo))
+            "[*]$textArtistInfo"
+        else getInfoFromService(artistName)
+
     }
 
     private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
@@ -70,26 +71,24 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getInfoFromService(artistName: String?): String {
 
-        var textArtistInfo = ""
+        val jobj = getJsonInfo(artistName)
+        val artistBio = getBiography(jobj)
+        openUrlButtonListener(getUrl(jobj))
 
-        try {
-            val jobj = getJsonInfo(artistName)
-            val artistBio = getBiography(jobj)
+        return getTextArtistInfo(artistBio, artistName)
 
-            if (!existBiography(artistBio)) {
-                textArtistInfo = "No Results"
-            } else {
-                textArtistInfo = setArtistBio(artistBio, artistName)
-                dataBase?.saveArtist(artistName, textArtistInfo)
-            }
+    }
 
-            openUrlButtonListener(getUrl(jobj))
+    private fun getTextArtistInfo(artistBio: JsonElement, artistName: String?): String {
 
-        } catch (e1: IOException) {
-            Log.e("TAG", "Error $e1")
-            e1.printStackTrace()
+        val textArtistInfo: String
+
+        if (!existBiography(artistBio)) {
+            textArtistInfo = "No Results"
+        } else {
+            textArtistInfo = setArtistBio(artistBio, artistName)
+            dataBase?.saveArtist(artistName, textArtistInfo)
         }
-
         return textArtistInfo
     }
 
@@ -144,7 +143,8 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun imageLoaderLastfm(text: String?) {
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            descriptionSongPane!!.text = HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            descriptionSongPane!!.text =
+                HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
     }
 
@@ -167,8 +167,10 @@ class OtherInfoWindow : AppCompatActivity() {
         return text
             .replace("'", " ")
             .replace("\n", "<br>")
-            .replace("(?i)" + term!!.toRegex(),
-                "<b>" + term.uppercase(Locale.getDefault()) + "</b>")
+            .replace(
+                "(?i)" + term!!.toRegex(),
+                "<b>" + term.uppercase(Locale.getDefault()) + "</b>"
+            )
     }
 
 }
