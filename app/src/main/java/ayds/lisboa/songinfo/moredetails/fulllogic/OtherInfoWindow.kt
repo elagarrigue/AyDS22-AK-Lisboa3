@@ -1,6 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import android.os.Bundle
@@ -13,10 +12,10 @@ import com.google.gson.JsonElement
 import android.content.Intent
 import android.net.Uri
 import com.squareup.picasso.Picasso
-import android.text.Html
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.core.text.HtmlCompat
 import retrofit2.Response
 import java.io.IOException
 import java.lang.StringBuilder
@@ -142,11 +141,10 @@ class OtherInfoWindow : AppCompatActivity() {
         return intent
     }
 
-    @SuppressLint("NewApi")
     private fun imageLoaderLastfm(text: String?) {
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            descriptionSongPane!!.text = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
+            descriptionSongPane!!.text = HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
     }
 
