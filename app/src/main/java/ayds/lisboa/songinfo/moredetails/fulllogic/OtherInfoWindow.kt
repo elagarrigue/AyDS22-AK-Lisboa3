@@ -11,9 +11,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonElement
 import android.content.Intent
 import android.net.Uri
-import com.squareup.picasso.Picasso
-import android.view.View
 import android.widget.ImageView
+import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
 import retrofit2.Response
 import java.lang.StringBuilder
@@ -24,6 +23,9 @@ private const val ARTIST_NAME = "artistName"
 private const val BIO = "bio"
 private const val CONTENT = "content"
 private const val URL = "url"
+private const val NO_RESULTS = "No Results"
+private const val PREFIX = "[*]"
+
 
 class OtherInfoWindow : AppCompatActivity() {
 
@@ -31,27 +33,55 @@ class OtherInfoWindow : AppCompatActivity() {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
 
-    private var descriptionSongPane: TextView? = null
-    private var dataBase: DataBase? = null
+    private lateinit var imageView: ImageView
+    private lateinit var lastFMAPI: LastFMAPI
+    private lateinit var view: TextView
+    private lateinit var descriptionSongPane: TextView
+    private lateinit var dataBase: DataBase
     private val imageUrl =
         "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        descriptionSongPane = findViewById(R.id.textPane2)
-        open(intent.getStringExtra(ARTIST_NAME))
+        initDescriptionSongPane()
+        initDataBase()
+        initArtistInfo()
+        initImageView()
+        initLastFMAPI()
+        initView()
     }
 
-    private fun open(artist: String?) {
-        dataBase = DataBase(this)
+    private fun initImageView() {
+        imageView = findViewById(R.id.imageView)
+    }
+
+    private fun initLastFMAPI() {
+        lastFMAPI = getLastFMAPI()
+    }
+
+    private fun initView() {
+        view = findViewById(R.id.openUrlButton)
+    }
+
+    private fun initArtistInfo() {
+        val artist = intent.getStringExtra(ARTIST_NAME)
         getArtistInfo(artist)
+    }
+
+    private fun initDescriptionSongPane() {
+        descriptionSongPane = findViewById(R.id.textPane2)
+    }
+
+    private fun initDataBase() {
+        dataBase = DataBase(this)
     }
 
     private fun getArtistInfo(artistName: String?) {
 
         Thread {
-            imageLoaderLastfm(getInfoFromDataBaseOrService(artistName))
+            val databaseInfo = getInfoFromDataBaseOrService(artistName)
+            imageLoaderLastfm(databaseInfo)
         }.start()
     }
 
@@ -60,14 +90,14 @@ class OtherInfoWindow : AppCompatActivity() {
         val textArtistInfo = getInfoFromDatabase(artistName)
 
         return if (isInDataBase(textArtistInfo))
-            "[*]$textArtistInfo"
+            "$PREFIX$textArtistInfo"
         else getInfoFromService(artistName)
 
     }
 
     private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
 
-    private fun getInfoFromDatabase(artistName: String?) = dataBase?.getArtistInfo(artistName!!)
+    private fun getInfoFromDatabase(artistName: String?) = dataBase.getArtistInfo(artistName!!)
 
     private fun getInfoFromService(artistName: String?): String {
 
@@ -84,12 +114,16 @@ class OtherInfoWindow : AppCompatActivity() {
         val textArtistInfo: String
 
         if (!existBiography(artistBio)) {
-            textArtistInfo = "No Results"
+            textArtistInfo = NO_RESULTS
         } else {
             textArtistInfo = setArtistBio(artistBio, artistName)
-            dataBase?.saveArtist(artistName, textArtistInfo)
+            saveArtistInDatabase(artistName,textArtistInfo)
         }
         return textArtistInfo
+    }
+
+    private fun saveArtistInDatabase(artistName: String?,textArtistInfo: String?) {
+        dataBase.saveArtist(artistName, textArtistInfo)
     }
 
     private fun getJsonInfo(artistName: String?): JsonObject {
@@ -98,7 +132,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getCallResponse(artistName: String?): Response<String> {
-        return getLastFMAPI().getArtistInfo(artistName).execute()
+        return lastFMAPI.getArtistInfo(artistName).execute()
     }
 
     private fun getLastFMAPI() = createRetrofit().create(LastFMAPI::class.java)
@@ -129,7 +163,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun openUrlButtonListener(url: JsonElement) {
         val urlString = url.asString
 
-        findViewById<View>(R.id.openUrlButton).setOnClickListener {
+        view.setOnClickListener {
             startActivity(getIntent(urlString))
         }
     }
@@ -142,10 +176,13 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun imageLoaderLastfm(text: String?) {
         runOnUiThread {
-            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            descriptionSongPane!!.text =
-                HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            Picasso.get().load(imageUrl).into(imageView)
+            updateDescriptionSongPane(text)
         }
+    }
+
+    private fun updateDescriptionSongPane(text: String?) {
+        descriptionSongPane.text = HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
     private fun textToHtml(text: String, term: String?): String {
