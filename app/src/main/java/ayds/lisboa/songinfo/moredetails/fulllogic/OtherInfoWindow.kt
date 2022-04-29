@@ -66,8 +66,8 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initArtistInfo() {
-        val artist = intent.getStringExtra(ARTIST_NAME)
-        getArtistInfo(artist)
+        val artist = intent.getStringExtra(ARTIST_NAME)?: ""
+        loadArtistInfo(artist)
     }
 
     private fun initDescriptionSongPane() {
@@ -78,17 +78,17 @@ class OtherInfoWindow : AppCompatActivity() {
         dataBase = DataBase(this)
     }
 
-    private fun getArtistInfo(artistName: String?) {
+    private fun loadArtistInfo(artistName: String) {
 
         Thread {
-            val databaseInfo = getInfoByArtistName(artistName)
-            imageLoaderLastfm(databaseInfo)
+            val artistInfo = getInfoByArtistName(artistName)
+            imageLoaderLastfm(artistInfo)
         }.start()
     }
 
-    private fun getInfoByArtistName(artistName: String?): String {
+    private fun getInfoByArtistName(artistName: String): String {
 
-        var textArtistInfo: String? = dataBase.getArtistInfo(artistName!!)
+        var textArtistInfo: String? = dataBase.getArtistInfo(artistName)
 
         when {
             textArtistInfo != null -> "$PREFIX$textArtistInfo"
@@ -103,7 +103,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return textArtistInfo ?: NO_RESULTS
     }
 
-    private fun getInfoFromService(artistName: String?): String? {
+    private fun getInfoFromService(artistName: String): String? {
 
         val jobj = getJsonInfo(artistName)
         val artistBio = getBiography(jobj)
@@ -114,16 +114,16 @@ class OtherInfoWindow : AppCompatActivity() {
         else parseArtistBio(artistBio, artistName)
     }
 
-    private fun saveArtistInDatabase(artistName: String?, textArtistInfo: String?) {
+    private fun saveArtistInDatabase(artistName: String, textArtistInfo: String?) {
         dataBase.saveArtist(artistName, textArtistInfo)
     }
 
-    private fun getJsonInfo(artistName: String?): JsonObject {
+    private fun getJsonInfo(artistName: String): JsonObject {
         val gson = Gson()
         return gson.fromJson(getCallResponse(artistName).body(), JsonObject::class.java)
     }
 
-    private fun getCallResponse(artistName: String?): Response<String> {
+    private fun getCallResponse(artistName: String): Response<String> {
         return lastFMAPI.getArtistInfo(artistName).execute()
     }
 
@@ -143,7 +143,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getArtist(jobj: JsonObject): JsonObject = jobj[ARTIST].asJsonObject
 
-    private fun parseArtistBio(artistBio: JsonElement, artistName: String?): String {
+    private fun parseArtistBio(artistBio: JsonElement, artistName: String): String {
         val textArtistInfo = artistBio.asString.replace("\\n", "\n")
         return textToHtml(textArtistInfo, artistName)
     }
@@ -164,18 +164,18 @@ class OtherInfoWindow : AppCompatActivity() {
         return intent
     }
 
-    private fun imageLoaderLastfm(text: String?) {
+    private fun imageLoaderLastfm(text: String) {
         runOnUiThread {
             Picasso.get().load(imageUrl).into(imageView)
             updateDescriptionSongPane(text)
         }
     }
 
-    private fun updateDescriptionSongPane(text: String?) {
-        descriptionSongPane.text = HtmlCompat.fromHtml(text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    private fun updateDescriptionSongPane(text: String) {
+        descriptionSongPane.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun textToHtml(text: String, term: String?): String {
+    private fun textToHtml(text: String, term: String): String {
 
         val builder = StringBuilder()
         builder.apply {
@@ -190,12 +190,12 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun getTextWithBold(text: String, term: String?): String {
+    private fun getTextWithBold(text: String, term: String): String {
         return text
             .replace("'", " ")
             .replace("\n", "<br>")
             .replace(
-                "(?i)" + term!!.toRegex(),
+                "(?i)" + term.toRegex(),
                 "<b>" + term.uppercase(Locale.getDefault()) + "</b>"
             )
     }
