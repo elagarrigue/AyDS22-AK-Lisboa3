@@ -14,6 +14,7 @@ import android.net.Uri
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
+import com.google.gson.JsonNull
 import retrofit2.Response
 import java.lang.StringBuilder
 import java.util.*
@@ -80,49 +81,40 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfo(artistName: String?) {
 
         Thread {
-            val databaseInfo = getInfoFromDataBaseOrService(artistName)
+            val databaseInfo = getInfoByArtistName(artistName)
             imageLoaderLastfm(databaseInfo)
         }.start()
     }
 
-    private fun getInfoFromDataBaseOrService(artistName: String?): String {
+    private fun getInfoByArtistName(artistName: String?): String {
 
-        val textArtistInfo = getInfoFromDatabase(artistName)
+        var textArtistInfo: String? = dataBase.getArtistInfo(artistName!!)
 
-        return if (isInDataBase(textArtistInfo))
-            "$PREFIX$textArtistInfo"
-        else getInfoFromService(artistName)
+        when {
+            textArtistInfo != null -> "$PREFIX$textArtistInfo"
+            else -> {
+                textArtistInfo = getInfoFromService(artistName)
 
+                textArtistInfo?.let {
+                    saveArtistInDatabase(artistName, textArtistInfo)
+                }
+            }
+        }
+        return textArtistInfo ?: NO_RESULTS
     }
 
-    private fun isInDataBase(textArtistInfo: String?): Boolean = textArtistInfo != null
-
-    private fun getInfoFromDatabase(artistName: String?) = dataBase.getArtistInfo(artistName!!)
-
-    private fun getInfoFromService(artistName: String?): String {
+    private fun getInfoFromService(artistName: String?): String? {
 
         val jobj = getJsonInfo(artistName)
         val artistBio = getBiography(jobj)
         openUrlButtonListener(getUrl(jobj))
 
-        return getTextArtistInfo(artistBio, artistName)
-
+        return if (artistBio is JsonNull)
+            null
+        else parseArtistBio(artistBio, artistName)
     }
 
-    private fun getTextArtistInfo(artistBio: JsonElement, artistName: String?): String {
-
-        val textArtistInfo: String
-
-        if (!existBiography(artistBio)) {
-            textArtistInfo = NO_RESULTS
-        } else {
-            textArtistInfo = setArtistBio(artistBio, artistName)
-            saveArtistInDatabase(artistName,textArtistInfo)
-        }
-        return textArtistInfo
-    }
-
-    private fun saveArtistInDatabase(artistName: String?,textArtistInfo: String?) {
+    private fun saveArtistInDatabase(artistName: String?, textArtistInfo: String?) {
         dataBase.saveArtist(artistName, textArtistInfo)
     }
 
@@ -151,14 +143,12 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getArtist(jobj: JsonObject): JsonObject = jobj[ARTIST].asJsonObject
 
-    private fun setArtistBio(artistBio: JsonElement, artistName: String?): String {
+    private fun parseArtistBio(artistBio: JsonElement, artistName: String?): String {
         val textArtistInfo = artistBio.asString.replace("\\n", "\n")
         return textToHtml(textArtistInfo, artistName)
     }
 
     private fun getUrl(jobj: JsonObject): JsonElement = getArtist(jobj)[URL]
-
-    private fun existBiography(artistBio: JsonElement?): Boolean = artistBio != null
 
     private fun openUrlButtonListener(url: JsonElement) {
         val urlString = url.asString
