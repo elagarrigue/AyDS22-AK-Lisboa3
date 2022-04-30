@@ -26,7 +26,9 @@ private const val CONTENT = "content"
 private const val URL = "url"
 private const val NO_RESULTS = "No Results"
 private const val PREFIX = "[*]"
-
+private const val LASTFM_API = "https://ws.audioscrobbler.com/2.0/"
+private const val IMAGE_URL =
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
 class OtherInfoWindow : AppCompatActivity() {
 
@@ -39,8 +41,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private lateinit var view: TextView
     private lateinit var descriptionSongPane: TextView
     private lateinit var dataBase: DataBase
-    private val imageUrl =
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +67,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initArtistInfo() {
-        val artist = intent.getStringExtra(ARTIST_NAME)?: ""
+        val artist = intent.getStringExtra(ARTIST_NAME) ?: ""
         loadArtistInfo(artist)
     }
 
@@ -82,7 +83,8 @@ class OtherInfoWindow : AppCompatActivity() {
 
         Thread {
             val artistInfo = getInfoByArtistName(artistName)
-            imageLoaderLastfm(artistInfo)
+            imageLoaderLastfm()
+            updateDescriptionSongPane(artistInfo)
         }.start()
     }
 
@@ -131,7 +133,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://ws.audioscrobbler.com/2.0/")
+            .baseUrl(LASTFM_API)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     }
@@ -164,15 +166,14 @@ class OtherInfoWindow : AppCompatActivity() {
         return intent
     }
 
-    private fun imageLoaderLastfm(text: String) {
-        runOnUiThread {
-            Picasso.get().load(imageUrl).into(imageView)
-            updateDescriptionSongPane(text)
-        }
+    private fun imageLoaderLastfm() {
+        Picasso.get().load(IMAGE_URL).into(imageView)
     }
 
     private fun updateDescriptionSongPane(text: String) {
-        descriptionSongPane.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        runOnUiThread {
+            descriptionSongPane.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        }
     }
 
     private fun textToHtml(text: String, term: String): String {
