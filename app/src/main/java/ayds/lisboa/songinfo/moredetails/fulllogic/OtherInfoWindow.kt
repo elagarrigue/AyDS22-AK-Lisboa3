@@ -26,7 +26,7 @@ private const val CONTENT = "content"
 private const val URL = "url"
 private const val NO_RESULTS = "No Results"
 private const val PREFIX = "[*]"
-private const val LASTFM_API = "https://ws.audioscrobbler.com/2.0/"
+private const val BASE_URL_RETROFIT = "https://ws.audioscrobbler.com/2.0/"
 private const val IMAGE_URL =
     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
@@ -133,7 +133,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(LASTFM_API)
+            .baseUrl(BASE_URL_RETROFIT)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     }
