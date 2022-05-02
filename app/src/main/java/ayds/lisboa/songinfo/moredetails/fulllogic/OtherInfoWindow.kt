@@ -11,6 +11,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonElement
 import android.content.Intent
 import android.net.Uri
+import android.widget.Button
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
@@ -38,7 +39,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private lateinit var imageView: ImageView
     private lateinit var lastFMAPI: LastFMAPI
-    private lateinit var view: TextView
+    private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
     private lateinit var dataBase: DataBase
 
@@ -46,24 +47,21 @@ class OtherInfoWindow : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        initDescriptionSongPane()
+
+        initViews()
         initDataBase()
         initArtistInfo()
-        initImageView()
         initLastFMAPI()
-        initView()
     }
 
-    private fun initImageView() {
+    private fun initViews(){
+        descriptionSongPane = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
+        viewArticleButton = findViewById(R.id.openUrlButton)
     }
 
-    private fun initLastFMAPI() {
-        lastFMAPI = getLastFMAPI()
-    }
-
-    private fun initView() {
-        view = findViewById(R.id.openUrlButton)
+    private fun initDataBase() {
+        dataBase = DataBase(this)
     }
 
     private fun initArtistInfo() {
@@ -71,12 +69,8 @@ class OtherInfoWindow : AppCompatActivity() {
         loadArtistInfo(artist)
     }
 
-    private fun initDescriptionSongPane() {
-        descriptionSongPane = findViewById(R.id.textPane2)
-    }
-
-    private fun initDataBase() {
-        dataBase = DataBase(this)
+    private fun initLastFMAPI() {
+        lastFMAPI = getLastFMAPI()
     }
 
     private fun loadArtistInfo(artistName: String) {
@@ -109,7 +103,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
         val jobj = getJsonInfo(artistName)
         val artistBio = getBiography(jobj)
-        openUrlButtonListener(getUrl(jobj))
+        setUrlButtonListener(getUrl(jobj))
 
         return if (artistBio is JsonNull)
             null
@@ -150,13 +144,14 @@ class OtherInfoWindow : AppCompatActivity() {
         return textToHtml(textArtistInfo, artistName)
     }
 
-    private fun getUrl(jobj: JsonObject): JsonElement = getArtist(jobj)[URL]
+    private fun getUrl(jobj: JsonObject): String {
+        val url = getArtist(jobj)[URL]
+        return url.asString
+     }
 
-    private fun openUrlButtonListener(url: JsonElement) {
-        val urlString = url.asString
-
-        view.setOnClickListener {
-            startActivity(getIntent(urlString))
+    private fun setUrlButtonListener(url: String) {
+        viewArticleButton.setOnClickListener {
+            startActivity(getIntent(url))
         }
     }
 
