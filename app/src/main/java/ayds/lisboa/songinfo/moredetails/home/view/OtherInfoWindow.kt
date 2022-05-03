@@ -16,7 +16,7 @@ import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb.LastFMLocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.home.model.LastFMAPI
+import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMAPI
 import com.google.gson.JsonNull
 import retrofit2.Response
 import java.lang.StringBuilder
@@ -85,7 +85,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getInfoByArtistName(artistName: String): String {
-
+        // TODO repository
         var textArtistInfo: String? = dataBase.getArtistInfoByArtistName(artistName)
 
         when {
@@ -101,6 +101,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return textArtistInfo ?: NO_RESULTS
     }
 
+    // TODO external
     private fun getInfoFromService(artistName: String): String? {
 
         val jobj = getJsonInfo(artistName)
@@ -112,21 +113,26 @@ class OtherInfoWindow : AppCompatActivity() {
         else parseArtistBio(artistBio, artistName)
     }
 
+    // TODO local
     private fun saveArtistInDatabase(artistName: String, textArtistInfo: String?) {
         dataBase.insertArtist(artistName, textArtistInfo)
     }
 
+    // TODO external
     private fun getJsonInfo(artistName: String): JsonObject {
         val gson = Gson()
         return gson.fromJson(getCallResponse(artistName).body(), JsonObject::class.java)
     }
 
+    // TODO external
     private fun getCallResponse(artistName: String): Response<String> {
         return lastFMAPI.getArtistInfo(artistName).execute()
     }
 
+    // TODO external
     private fun getLastFMAPI() = createRetrofit().create(LastFMAPI::class.java)
 
+    // TODO external
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL_RETROFIT)
@@ -134,29 +140,35 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
+    // TODO external
     private fun getBiography(jobj: JsonObject): JsonElement {
         val artistBio = getArtist(jobj)[BIO].asJsonObject
         return artistBio[CONTENT]
     }
 
+    // TODO external
     private fun getArtist(jobj: JsonObject): JsonObject = jobj[ARTIST].asJsonObject
 
+    // TODO external
     private fun parseArtistBio(artistBio: JsonElement, artistName: String): String {
         val textArtistInfo = artistBio.asString.replace("\\n", "\n")
         return textToHtml(textArtistInfo, artistName)
     }
 
+    // TODO external
     private fun getUrl(jobj: JsonObject): String {
         val url = getArtist(jobj)[URL]
         return url.asString
      }
 
+    // TODO external
     private fun setUrlButtonListener(url: String) {
         viewArticleButton.setOnClickListener {
             startActivity(getIntent(url))
         }
     }
 
+    // TODO external
     private fun getIntent(urlString: String): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
@@ -173,6 +185,7 @@ class OtherInfoWindow : AppCompatActivity() {
         }
     }
 
+    // TODO external
     private fun textToHtml(text: String, term: String): String {
 
         val builder = StringBuilder()
@@ -188,6 +201,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
+    // TODO external
     private fun getTextWithBold(text: String, term: String): String {
         return text
             .replace("'", " ")
