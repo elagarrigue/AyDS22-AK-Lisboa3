@@ -15,7 +15,7 @@ import android.widget.Button
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
-import ayds.lisboa.songinfo.moredetails.home.model.DataBase
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.home.model.LastFMAPI
 import com.google.gson.JsonNull
 import retrofit2.Response
@@ -43,7 +43,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private lateinit var lastFMAPI: LastFMAPI
     private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
-    private lateinit var dataBase: DataBase
+    private lateinit var dataBase: LastFMLocalStorageImpl
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +63,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initDataBase() {
-        dataBase = DataBase(this)
+        dataBase = LastFMLocalStorageImpl(this)
     }
 
     private fun initArtistInfo() {
@@ -86,7 +86,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getInfoByArtistName(artistName: String): String {
 
-        var textArtistInfo: String? = dataBase.getArtistInfo(artistName)
+        var textArtistInfo: String? = dataBase.getArtistInfoByArtistName(artistName)
 
         when {
             textArtistInfo != null -> "$PREFIX$textArtistInfo"
@@ -113,7 +113,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun saveArtistInDatabase(artistName: String, textArtistInfo: String?) {
-        dataBase.saveArtist(artistName, textArtistInfo)
+        dataBase.insertArtist(artistName, textArtistInfo)
     }
 
     private fun getJsonInfo(artistName: String): JsonObject {

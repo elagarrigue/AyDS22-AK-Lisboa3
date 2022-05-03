@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.home.model
+package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb
 
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
@@ -9,21 +9,14 @@ import android.database.Cursor
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1
 
-const val ARTISTS_TABLE = "artists"
-const val ID_COLUMN = "id"
-const val ARTIST_COLUMN = "artist"
-const val INFO_COLUMN = "info"
-const val SOURCE_COLUMN = "source"
-
-const val createArtistTableQuery: String =
-    "create table $ARTISTS_TABLE (" +
-            "$ID_COLUMN integer PRIMARY KEY, " +
-            "$ARTIST_COLUMN string, " +
-            "$INFO_COLUMN string, " +
-            "$SOURCE_COLUMN integer)"
-
-class DataBase(context: Context?) :
+class LastFMLocalStorageImpl(context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    private val projection = arrayOf(
+        ID_COLUMN,
+        ARTIST_COLUMN,
+        INFO_COLUMN
+    )
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createArtistTableQuery)
@@ -31,13 +24,7 @@ class DataBase(context: Context?) :
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    private val projection = arrayOf(
-        "id",
-        "artist",
-        "info"
-    )
-
-    fun saveArtist(artist: String?, info: String?) {
+    fun insertArtist(artist: String?, info: String?) {
         val values = ContentValues().apply {
             put(ARTIST_COLUMN, artist)
             put(INFO_COLUMN, info)
@@ -47,7 +34,7 @@ class DataBase(context: Context?) :
         writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
 
-    fun getArtistInfo(artist: String): String? {
+    fun getArtistInfoByArtistName(artist: String): String? {
         return getFirstInfoRow(getCursorForArtists(artist))
     }
 
