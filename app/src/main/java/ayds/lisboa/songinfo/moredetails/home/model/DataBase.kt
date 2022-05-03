@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.home.model
 
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase

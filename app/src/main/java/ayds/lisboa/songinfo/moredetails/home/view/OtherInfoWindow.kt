@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.home.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
@@ -15,6 +15,8 @@ import android.widget.Button
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import androidx.core.text.HtmlCompat
+import ayds.lisboa.songinfo.moredetails.home.model.DataBase
+import ayds.lisboa.songinfo.moredetails.home.model.LastFMAPI
 import com.google.gson.JsonNull
 import retrofit2.Response
 import java.lang.StringBuilder
