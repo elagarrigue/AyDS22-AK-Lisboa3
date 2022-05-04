@@ -14,7 +14,7 @@ class LastFMLocalStorageImpl(context: Context?) :
 
     private val projection = arrayOf(
         ID_COLUMN,
-        ARTIST_COLUMN,
+        NAME_COLUMN,
         INFO_COLUMN
     )
 
@@ -26,7 +26,7 @@ class LastFMLocalStorageImpl(context: Context?) :
 
     fun insertArtist(artist: String?, info: String?) {
         val values = ContentValues().apply {
-            put(ARTIST_COLUMN, artist)
+            put(NAME_COLUMN, artist)
             put(INFO_COLUMN, info)
             put(SOURCE_COLUMN, 1)
         }
@@ -42,11 +42,11 @@ class LastFMLocalStorageImpl(context: Context?) :
         return readableDatabase.query(
             ARTISTS_TABLE,
             projection,
-            "$ARTIST_COLUMN = ?",
+            "$NAME_COLUMN = ?",
             arrayOf(artist),
             null,
             null,
-            "$ARTIST_COLUMN DESC"
+            "$NAME_COLUMN DESC"
         )
     }
 
