@@ -14,9 +14,7 @@ private const val URL = "url"
 private const val BIO = "bio"
 private const val BIO_CONTENT = "content"
 
-internal class JsonToArtistResolver(
-    private val lastFMArtistBioParser: LastFMArtistBioParser
-): LastFMToArtistResolver {
+internal class JsonToArtistResolver : LastFMToArtistResolver {
     override fun getArtistFromExternalData(serviceData: String?): LastFMArtist? =
         try {
             serviceData?.getArtistItem()?.let { item ->
@@ -43,8 +41,7 @@ internal class JsonToArtistResolver(
 
     private fun JsonObject.getBioContent(): String {
         val bio = this[BIO].asJsonObject
-        val content = bio[BIO_CONTENT].asString
-        return lastFMArtistBioParser.parseArtistBioToDisplayableHtml(content, this.getName())
+        return bio[BIO_CONTENT].asString
     }
 
 }
