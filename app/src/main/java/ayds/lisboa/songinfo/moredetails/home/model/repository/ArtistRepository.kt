@@ -1,21 +1,19 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
-import ayds.lisboa.songinfo.home.model.entities.EmptySong
-import ayds.lisboa.songinfo.home.model.entities.SpotifySong
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 
-interface ArtistRepositoy {
+interface ArtistRepository {
     fun getArtistByName(term: String): Artist
 }
 
 internal class ArtistRepositoryImpl(
     private val lastFMLocalStorage: LastFMLocalStorage,
     private val lastFMService: LastFMService
-) : ArtistRepositoy {
+) : ArtistRepository {
 
     override fun getArtistByName(term: String): Artist {
         var lastFMArtist = lastFMLocalStorage.getArtistByName(term)
