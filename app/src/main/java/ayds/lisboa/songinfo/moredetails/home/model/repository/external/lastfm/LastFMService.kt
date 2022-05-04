@@ -1,6 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 import retrofit2.Response
 
 interface LastFMService {
@@ -13,7 +14,7 @@ class LastFMServiceImpl(
     private val lastFMToArtistResolver: LastFMToArtistResolver,
 ): LastFMService {
 
-    override fun getArtist(artistName: String): Artist? {
+    override fun getArtist(artistName: String): LastFMArtist? {
         val callResponse = getArtistFromService(artistName)
         return lastFMToArtistResolver.getArtistFromExternalData(callResponse.body())
     }
