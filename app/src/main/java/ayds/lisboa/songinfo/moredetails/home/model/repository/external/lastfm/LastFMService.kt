@@ -6,7 +6,7 @@ import retrofit2.Response
 
 interface LastFMService {
 
-    fun getArtist(artistName: String): Artist?
+    fun getArtist(artistName: String): LastFMArtist?
 }
 
 class LastFMServiceImpl(
