@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1
@@ -13,7 +13,8 @@ const val DATABASE_VERSION = 1
 class LastFMLocalStorageImpl(
     context: Context,
     private val cursorToArtistMapper: CursorToArtistMapper
-) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION),
+    LastFMLocalStorage{
 
     private val projection = arrayOf(
         ID_COLUMN,
@@ -28,7 +29,7 @@ class LastFMLocalStorageImpl(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    fun insertArtist(query: String, artist: LastFMArtist) {
+    override fun insertArtist(query: String, artist: LastFMArtist) {
         val values = ContentValues().apply {
             put(NAME_COLUMN, artist.name)
             put(TERM_COLUMN, query)
@@ -40,7 +41,7 @@ class LastFMLocalStorageImpl(
         writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
 
-    fun getArtistInfoByName(artist: String): Artist? {
+    override fun getArtistByName(artist: String): LastFMArtist? {
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,

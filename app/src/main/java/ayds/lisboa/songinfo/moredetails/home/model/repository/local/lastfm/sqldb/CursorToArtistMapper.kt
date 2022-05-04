@@ -2,23 +2,22 @@ package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqld
 
 import android.database.Cursor
 import android.database.SQLException
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 
 interface CursorToArtistMapper {
 
-    fun map(cursor: Cursor): Artist?
+    fun map(cursor: Cursor): LastFMArtist?
 }
 
 internal class CursorToArtistMapperImpl : CursorToArtistMapper {
 
-    override fun map(cursor: Cursor): Artist? =
+    override fun map(cursor: Cursor): LastFMArtist? =
         try {
             with(cursor) {
                 if (moveToNext()) {
                     LastFMArtist(
                         name = getString(getColumnIndexOrThrow(NAME_COLUMN)),
-                        url = getString(getColumnIndexOrThrow(NAME_COLUMN)),
+                        url = getString(getColumnIndexOrThrow(URL_COLUMN)),
                         info = getString(getColumnIndexOrThrow(INFO_COLUMN)),
                     )
                 } else {
