@@ -1,5 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.home.controller
 
+import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsEvent
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsView
 import ayds.observer.Observer
@@ -11,7 +12,7 @@ interface MoreDetailsController{
 }
 
 internal class MoreDetailsControllerImpl(
-    //private val moreDetailsModel: MoreDetailsModel
+    private val moreDetailsModel: MoreDetailsModel
 ) : MoreDetailsController {
 
    private lateinit var moreDetailsView: MoreDetailsView
