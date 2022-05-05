@@ -13,6 +13,7 @@ import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.home.model.HomeModel
 import ayds.lisboa.songinfo.home.model.HomeModelInjector
 import ayds.lisboa.songinfo.home.view.HomeViewInjector
+import ayds.lisboa.songinfo.home.view.SongDescriptionHelper
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMAPI
@@ -39,6 +40,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
+    private val lastFMArtistBioParser: LastFMArtistBioParser = MoreDetailsViewInjector.LastFMArtistBioParser
 
     private lateinit var imageView: ImageView
     private lateinit var lastFMAPI: LastFMAPI
