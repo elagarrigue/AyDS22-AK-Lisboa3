@@ -12,10 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.home.model.HomeModel
 import ayds.lisboa.songinfo.home.model.HomeModelInjector
+import ayds.lisboa.songinfo.home.model.entities.EmptySong
+import ayds.lisboa.songinfo.home.model.entities.Song
+import ayds.lisboa.songinfo.home.model.entities.SpotifySong
 import ayds.lisboa.songinfo.home.view.HomeViewInjector
 import ayds.lisboa.songinfo.home.view.SongDescriptionHelper
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMAPI
 import ayds.observer.Observable
 import ayds.observer.Subject
@@ -43,7 +49,6 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private val lastFMArtistBioParser: LastFMArtistBioParser = MoreDetailsViewInjector.LastFMArtistBioParser
 
     private lateinit var imageView: ImageView
-    private lateinit var lastFMAPI: LastFMAPI
     private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
 
@@ -54,11 +59,26 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-
+        initObservers()
         initModule()
-        initViews()
-        initArtistInfo()
-        initLastFMAPI()
+        initProperties()
+        initListeners()
+    }
+    private fun searchAction() {
+        updateDisabledActionsState()
+        notifySearchArtist()
+    }
+
+    private fun initListeners() {
+        viewArticleButton.setOnClickListener {
+            startActivity(getIntent(moreDetailsState.url)) //CAMBIAR
+            searchAction()// VERIFICAR
+        }
+    }
+    private fun getIntent(urlString: String): Intent {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(urlString)
+        return intent
     }
 
     private fun initModule() {
@@ -66,43 +86,25 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         moreDetailsModel = MoreDetailsModelInjector.getMoreDetailsModel()
     }
 
-    private fun initViews() {
+    private fun initProperties() {
         descriptionSongPane = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
         viewArticleButton = findViewById(R.id.openUrlButton)
     }
 
-    private fun initArtistInfo() {
-        val artist = intent.getStringExtra(moreDetailsState.artistName) ?: ""
-        // loadArtistInfo(artist)
+    private fun notifySearchArtist() {
+        onActionSubject.notify(MoreDetailsEvent.SearchArtist)
     }
 
-    private fun initLastFMAPI() {
-        lastFMAPI = getLastFMAPI()
+    private fun initObservers() {
+        moreDetailsModel.artistObservable
+            .subscribe { value -> updateMoreDetailsInfo(value) }
     }
 
-    private fun notifyGetArtistInfo() {
-        onActionSubject.notify(MoreDetailsEvent.GetArtistInfo)
-    }
-
-    private fun getLastFMAPI() = createRetrofit().create(LastFMAPI::class.java)
-
-    private fun getIntent(urlString: String): Intent {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(urlString)
-        return intent
-    }
-
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(moreDetailsState.baseUrlRetrofit)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-    }
-
-    private fun updateMoreDetailsInfo() {
+    private fun updateMoreDetailsInfo(artist:Artist) {
         updateImageLoaderLastfm()
         updateDescriptionSongPane()
+        updateMoreDetailsState(artist)
     }
 
     private fun updateImageLoaderLastfm() {
@@ -118,6 +120,35 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         }
+    }
+
+    private fun updateDisabledActionsState() {
+        moreDetailsState = moreDetailsState.copy(actionsEnabled = false)
+    }
+
+    private fun updateMoreDetailsState(artist: Artist) {
+        when (artist) {
+            is LastFMArtist -> updateSongMoreDetailsState(artist)
+            EmptyArtist -> updateNoResultsMoreDetailsState(artist)
+        }
+    }
+
+    private fun updateSongMoreDetailsState(artist: Artist) {
+        moreDetailsState = moreDetailsState.copy(
+            artist = artist.name,
+            bio = artist.info,
+            url = artist.url,
+            actionsEnabled = true
+        )
+    }
+
+    private fun updateNoResultsMoreDetailsState(artist: Artist) {
+        moreDetailsState = moreDetailsState.copy(
+            artist = "",
+            bio = "",
+            url = "",
+            actionsEnabled = true
+        )
     }
 
 }

@@ -7,7 +7,6 @@ import ayds.observer.Observer
 
 
 interface MoreDetailsController{
-
     fun setMoreDetailsView(moreDetailsView: MoreDetailsView)
 }
 
@@ -18,19 +17,21 @@ internal class MoreDetailsControllerImpl(
    private lateinit var moreDetailsView: MoreDetailsView
     override fun setMoreDetailsView(moreDetailsView: MoreDetailsView) {
         this.moreDetailsView = moreDetailsView
-        //moreDetailsView.moreDetailsEventObservable.subscribe(observer)
+        moreDetailsView.moreDetailsEventObservable.subscribe(observer)
     }
 
-    private val observer: Observer<MoreDetailsView> =
+    private val observer: Observer<MoreDetailsEvent> =
         Observer { value ->
             when (value) {
-                //MoreDetailsEvent.GetArtistInfo -> getInfoByArtistName()
+                MoreDetailsEvent.SearchArtist -> searchArtist()
             }
         }
-    private fun getInfoByArtistName() {
-        //moreDetailsView.getInfoByArtistName(moreDetailsView.moreDetailsState.artistName)
+    private fun searchArtist() {
+        // Warning: Never use Thread in android! Use coroutines
+        Thread {
+            moreDetailsModel.searchArtist(moreDetailsView.moreDetailsState.artist)
+        }.start()
     }
-
 
 }
 
