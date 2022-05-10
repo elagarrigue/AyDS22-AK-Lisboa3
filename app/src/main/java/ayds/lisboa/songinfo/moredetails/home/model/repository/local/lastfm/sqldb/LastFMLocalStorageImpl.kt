@@ -29,10 +29,9 @@ class LastFMLocalStorageImpl(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun insertArtist(query: String, artist: LastFMArtist) {
+    override fun insertArtist(artist: LastFMArtist) {
         val values = ContentValues().apply {
             put(NAME_COLUMN, artist.name)
-            put(TERM_COLUMN, query)
             put(URL_COLUMN, artist.url)
             put(INFO_COLUMN, artist.info)
             put(SOURCE_COLUMN, 1)

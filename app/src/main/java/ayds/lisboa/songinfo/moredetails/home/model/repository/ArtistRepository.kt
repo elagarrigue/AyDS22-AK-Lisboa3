@@ -7,7 +7,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.La
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 
 interface ArtistRepository {
-    fun getArtistByName(term: String): Artist
+    fun getArtistByName(artistName: String): Artist
 }
 
 internal class ArtistRepositoryImpl(
@@ -15,22 +15,17 @@ internal class ArtistRepositoryImpl(
     private val lastFMService: LastFMService
 ) : ArtistRepository {
 
-    override fun getArtistByName(term: String): Artist {
-        var lastFMArtist = lastFMLocalStorage.getArtistByName(term)
+    override fun getArtistByName(artistName: String): Artist {
+        var lastFMArtist = lastFMLocalStorage.getArtistByName(artistName)
 
         when {
             lastFMArtist != null -> markArtistAsLocal(lastFMArtist)
             else -> {
                 try {
-                    lastFMArtist = lastFMService.getArtist(term)
-                    /*
+                    lastFMArtist = lastFMService.getArtist(artistName)
                     lastFMArtist?.let {
-                        when {
-                            it.isSavedArtist() -> lastFMLocalStorage.updateArtistTerm(term, it.id)
-                            else -> lastFMLocalStorage.insertArtist(term, it)
-                        }
+                        lastFMLocalStorage.insertArtist(it)
                     }
-                    */
                 } catch (e: Exception) {
                     lastFMArtist = null
                 }
@@ -39,8 +34,6 @@ internal class ArtistRepositoryImpl(
 
         return lastFMArtist ?: EmptyArtist
     }
-
-    //private fun LastFMArtist.isSavedArtist() = lastFMLocalStorage.getArtistById(id)
 
     private fun markArtistAsLocal(artist: LastFMArtist) {
         artist.isLocallyStored = true
