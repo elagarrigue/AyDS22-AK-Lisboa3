@@ -5,7 +5,6 @@ data class MoreDetailsState (
     val bio: String = "bio",
     val url: String = "url",
     val actionsEnabled: Boolean = false,
-    val songDescription: String = "",
     val imageUrl: String = DEFAULT_IMAGE,
 
 ){
