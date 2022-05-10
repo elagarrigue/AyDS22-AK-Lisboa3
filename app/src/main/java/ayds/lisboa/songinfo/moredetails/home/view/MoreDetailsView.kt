@@ -1,8 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
-
-import android.content.Intent
-import android.net.Uri
 import android.widget.TextView
 import android.os.Bundle
 import ayds.lisboa.songinfo.R
@@ -10,27 +7,15 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import ayds.lisboa.songinfo.home.model.HomeModel
-import ayds.lisboa.songinfo.home.model.HomeModelInjector
-import ayds.lisboa.songinfo.home.model.entities.EmptySong
-import ayds.lisboa.songinfo.home.model.entities.Song
-import ayds.lisboa.songinfo.home.model.entities.SpotifySong
-import ayds.lisboa.songinfo.home.view.HomeViewInjector
-import ayds.lisboa.songinfo.home.view.SongDescriptionHelper
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
-import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMAPI
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
 import com.squareup.picasso.Picasso
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.*
-
 
 interface MoreDetailsView {
 
@@ -48,8 +33,6 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
-    private val lastFMArtistBioParser: LastFMArtistBioParser =
-        MoreDetailsViewInjector.LastFMArtistBioParser
 
     private lateinit var imageView: ImageView
     private lateinit var viewArticleButton: Button
@@ -121,7 +104,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun updateDescriptionSongPane() {
         runOnUiThread {
             descriptionSongPane.text = HtmlCompat.fromHtml(
-                moreDetailsState.songDescription,
+                moreDetailsState.bio,
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         }
@@ -137,9 +120,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun updateSongMoreDetailsState(artist: Artist) {
         moreDetailsState = moreDetailsState.copy(
             artist = artist.name,
-            // bio = artist.info,
-            /** Forma de obtener la bio con el parseToHtml **/
-            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(artist.info, artist.name),
+            bio = artist.info,
             url = artist.url,
             actionsEnabled = true
         )
