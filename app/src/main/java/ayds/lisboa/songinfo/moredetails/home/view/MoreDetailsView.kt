@@ -64,6 +64,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         setContentView(R.layout.activity_other_info)
 
         initModule()
+        initState()
         initProperties()
         initListeners()
         initObservers()
@@ -73,6 +74,11 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun initModule() {
         MoreDetailsViewInjector.init(this)
         moreDetailsModel = MoreDetailsModelInjector.getMoreDetailsModel()
+    }
+
+    private fun initState() {
+        val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA) ?: ""
+        moreDetailsState = moreDetailsState.copy(artist = artistName)
     }
 
     private fun initProperties() {
