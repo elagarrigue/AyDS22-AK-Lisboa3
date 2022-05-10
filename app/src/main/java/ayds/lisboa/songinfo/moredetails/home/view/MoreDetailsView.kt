@@ -84,16 +84,17 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun initListeners() {
         viewArticleButton.setOnClickListener {
-            openArticleLink(moreDetailsState.url)
+            notifyOpenURLAction()
         }
     }
+
     override fun openArticleLink(url: String) {
         navigationUtils.openExternalUrl(this, url)
     }
-    /*
-    private fun notifyOpenURLAction(){
+
+    private fun notifyOpenURLAction() {
         onActionSubject.notify(MoreDetailsEvent.OpenURL)
-    }*/
+    }
 
     private fun initObservers() {
         moreDetailsModel.artistObservable
