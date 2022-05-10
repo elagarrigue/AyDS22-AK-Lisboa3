@@ -37,7 +37,8 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private lateinit var imageView: ImageView
     private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
-
+    private val lastFMArtistBioParser: LastFMArtistBioParser =
+        MoreDetailsViewInjector.LastFMArtistBioParser
     override val moreDetailsEventObservable: Observable<MoreDetailsEvent> = onActionSubject
     override var moreDetailsState: MoreDetailsState = MoreDetailsState()
 
@@ -103,12 +104,14 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun updateDescriptionSongPane() {
         runOnUiThread {
-            descriptionSongPane.text = HtmlCompat.fromHtml(
-                moreDetailsState.bio,
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
+            descriptionSongPane.text =
+                HtmlCompat.fromHtml(lastFMArtistBioParser.parseArtistBioToDisplayableHtml(
+                    moreDetailsState.bio,
+                    moreDetailsState.artist), HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
+
     }
+
 
     private fun updateMoreDetailsState(artist: Artist) {
         when (artist) {
