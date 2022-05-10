@@ -11,9 +11,7 @@ object LastFMInjector {
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private val lastFMAPI = lastFMAPIRetrofit.create(LastFMAPI::class.java)
-    private val lastFMToArtistResolver: LastFMToArtistResolver = JsonToArtistResolver(
-        LastFMArtistBioParserImpl()
-    )
+    private val lastFMToArtistResolver: LastFMToArtistResolver = JsonToArtistResolver()
 
     val lastFMService: LastFMService = LastFMServiceImpl(
         lastFMAPI,
