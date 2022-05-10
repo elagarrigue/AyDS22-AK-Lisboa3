@@ -34,10 +34,6 @@ import java.util.*
 
 interface MoreDetailsView {
 
-    companion object {
-        const val ARTIST_NAME_EXTRA = "artistName"
-    }
-
     val moreDetailsEventObservable: Observable<MoreDetailsEvent>
     var moreDetailsState: MoreDetailsState
 
@@ -46,6 +42,9 @@ interface MoreDetailsView {
 
 class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
+    }
 
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
