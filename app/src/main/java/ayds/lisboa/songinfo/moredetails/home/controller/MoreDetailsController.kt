@@ -24,6 +24,7 @@ internal class MoreDetailsControllerImpl(
         Observer { value ->
             when (value) {
                 MoreDetailsEvent.SearchArtist -> searchArtist()
+                MoreDetailsEvent.OpenURL -> openSongUrl()
             }
         }
     private fun searchArtist() {
@@ -33,5 +34,8 @@ internal class MoreDetailsControllerImpl(
         }.start()
     }
 
+    private fun openSongUrl() {
+        moreDetailsView.openArticleLink(moreDetailsView.moreDetailsState.url)
+    }
 }
 

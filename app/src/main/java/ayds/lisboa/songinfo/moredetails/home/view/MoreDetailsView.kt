@@ -23,6 +23,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMAPI
+import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
 import com.squareup.picasso.Picasso
@@ -39,6 +40,8 @@ interface MoreDetailsView {
 
     val moreDetailsEventObservable: Observable<MoreDetailsEvent>
     var moreDetailsState: MoreDetailsState
+
+    fun openArticleLink(url: String)
 }
 
 class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
@@ -46,7 +49,8 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
-    private val lastFMArtistBioParser: LastFMArtistBioParser = MoreDetailsViewInjector.LastFMArtistBioParser
+    private val lastFMArtistBioParser: LastFMArtistBioParser =
+        MoreDetailsViewInjector.LastFMArtistBioParser
 
     private lateinit var imageView: ImageView
     private lateinit var viewArticleButton: Button
@@ -59,26 +63,12 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        initObservers()
+
         initModule()
         initProperties()
         initListeners()
-    }
-    private fun searchAction() {
-        updateDisabledActionsState()
-        notifySearchArtist()
-    }
-
-    private fun initListeners() {
-        viewArticleButton.setOnClickListener {
-            startActivity(getIntent(moreDetailsState.url)) //CAMBIAR
-            searchAction()// VERIFICAR
-        }
-    }
-    private fun getIntent(urlString: String): Intent {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(urlString)
-        return intent
+        initObservers()
+        searchAction()
     }
 
     private fun initModule() {
@@ -92,16 +82,25 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         viewArticleButton = findViewById(R.id.openUrlButton)
     }
 
-    private fun notifySearchArtist() {
-        onActionSubject.notify(MoreDetailsEvent.SearchArtist)
+    private fun initListeners() {
+        viewArticleButton.setOnClickListener {
+            openArticleLink(moreDetailsState.url)
+        }
     }
+    override fun openArticleLink(url: String) {
+        navigationUtils.openExternalUrl(this, url)
+    }
+    /*
+    private fun notifyOpenURLAction(){
+        onActionSubject.notify(MoreDetailsEvent.OpenURL)
+    }*/
 
     private fun initObservers() {
         moreDetailsModel.artistObservable
             .subscribe { value -> updateMoreDetailsInfo(value) }
     }
 
-    private fun updateMoreDetailsInfo(artist:Artist) {
+    private fun updateMoreDetailsInfo(artist: Artist) {
         updateImageLoaderLastfm()
         updateDescriptionSongPane()
         updateMoreDetailsState(artist)
@@ -122,33 +121,44 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         }
     }
 
-    private fun updateDisabledActionsState() {
-        moreDetailsState = moreDetailsState.copy(actionsEnabled = false)
-    }
-
     private fun updateMoreDetailsState(artist: Artist) {
         when (artist) {
             is LastFMArtist -> updateSongMoreDetailsState(artist)
-            EmptyArtist -> updateNoResultsMoreDetailsState(artist)
+            EmptyArtist -> updateNoResultsMoreDetailsState()
         }
     }
 
     private fun updateSongMoreDetailsState(artist: Artist) {
         moreDetailsState = moreDetailsState.copy(
             artist = artist.name,
-            bio = artist.info,
+            // bio = artist.info,
+            /** Forma de obtener la bio con el parseToHtml **/
+            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(artist.info, artist.name),
             url = artist.url,
             actionsEnabled = true
         )
     }
 
-    private fun updateNoResultsMoreDetailsState(artist: Artist) {
+    private fun updateNoResultsMoreDetailsState() {
         moreDetailsState = moreDetailsState.copy(
             artist = "",
             bio = "",
             url = "",
             actionsEnabled = true
         )
+    }
+
+    private fun searchAction() {
+        updateDisabledActionsState()
+        notifySearchArtist()
+    }
+
+    private fun updateDisabledActionsState() {
+        moreDetailsState = moreDetailsState.copy(actionsEnabled = false)
+    }
+
+    private fun notifySearchArtist() {
+        onActionSubject.notify(MoreDetailsEvent.SearchArtist)
     }
 
 }

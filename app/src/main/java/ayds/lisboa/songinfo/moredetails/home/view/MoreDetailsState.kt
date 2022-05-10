@@ -2,7 +2,6 @@ package ayds.lisboa.songinfo.moredetails.home.view
 
 data class MoreDetailsState (
     val artist: String = "artist",
-    val artistName: String = "artistName",
     val bio: String = "bio",
     val url: String = "url",
     val actionsEnabled: Boolean = false,
