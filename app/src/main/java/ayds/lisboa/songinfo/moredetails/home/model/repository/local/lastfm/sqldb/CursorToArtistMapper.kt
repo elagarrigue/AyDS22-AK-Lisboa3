@@ -28,6 +28,4 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper {
             e.printStackTrace()
             null
         }
-
-
 }
