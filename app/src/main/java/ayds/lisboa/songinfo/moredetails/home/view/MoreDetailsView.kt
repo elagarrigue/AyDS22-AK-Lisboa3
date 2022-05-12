@@ -91,9 +91,25 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun updateMoreDetailsInfo(artist: Artist) {
-        updateImageLoaderLastfm()
-        updateDescriptionSongPane()
         updateMoreDetailsState(artist)
+        textFormatter()
+        updateDescriptionSongPane()
+        updateImageLoaderLastfm()
+    }
+
+    private fun textFormatter(): String =
+        lastFMArtistBioParser.parseArtistBioToDisplayableHtml(
+            moreDetailsState.bio,
+            moreDetailsState.artist
+        )
+
+    private fun updateDescriptionSongPane() {
+        runOnUiThread {
+            descriptionSongPane.text =
+                HtmlCompat.fromHtml(
+                    moreDetailsState.bio, HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+        }
     }
 
     private fun updateImageLoaderLastfm() {
@@ -101,17 +117,6 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
             Picasso.get().load(moreDetailsState.imageUrl).into(imageView)
         }
     }
-
-    private fun updateDescriptionSongPane() {
-        runOnUiThread {
-            descriptionSongPane.text =
-                HtmlCompat.fromHtml(lastFMArtistBioParser.parseArtistBioToDisplayableHtml(
-                    moreDetailsState.bio,
-                    moreDetailsState.artist), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        }
-
-    }
-
 
     private fun updateMoreDetailsState(artist: Artist) {
         when (artist) {
