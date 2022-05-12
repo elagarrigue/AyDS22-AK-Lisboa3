@@ -7,6 +7,9 @@ interface LastFMArtistBioParser {
     fun parseArtistBioToDisplayableHtml(artistBio: String, artistName: String): String
 }
 
+private const val FONT = "arial"
+private const val WIDTH = 400
+
 internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
 
     override fun parseArtistBioToDisplayableHtml(artistBio: String, artistName: String): String {
@@ -26,8 +29,8 @@ internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
 
     private fun String.toHtml(): String {
         return StringBuilder().apply {
-            append("<html><div width=400>")
-            append("<font face=\"arial\">")
+            append("<html><div width=$WIDTH>")
+            append("<font face=\"$FONT\">")
             append(this@toHtml)
             append("</font></div></html>")
         }.toString()
