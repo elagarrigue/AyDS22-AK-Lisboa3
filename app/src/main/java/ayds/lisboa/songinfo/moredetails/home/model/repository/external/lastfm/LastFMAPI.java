@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic;
+package ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm;
 
 
 import retrofit2.Call;
