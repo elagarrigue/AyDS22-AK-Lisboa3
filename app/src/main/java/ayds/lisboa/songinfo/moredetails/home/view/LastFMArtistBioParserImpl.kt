@@ -1,19 +1,22 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
 import java.lang.StringBuilder
 import java.util.*
 
 interface LastFMArtistBioParser {
-    fun parseArtistBioToDisplayableHtml(artistBio: String, artistName: String): String
+    fun parseArtistBioToDisplayableHtml(artist: Artist): String
 }
 
-private const val FONT = "arial"
 private const val WIDTH = 400
+private const val HEADER = "<html><div width=$WIDTH>"
+private const val FONT = "<font face=\"arial\">"
+private const val FOOTER = "</font></div></html>"
 
 internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
 
-    override fun parseArtistBioToDisplayableHtml(artistBio: String, artistName: String): String {
-        val boldedArtistBio = artistBio.getBoldText(artistName)
+    override fun parseArtistBioToDisplayableHtml(artist: Artist): String {
+        val boldedArtistBio = artist.info.getBoldText(artist.name)
         return boldedArtistBio.toHtml()
     }
 
@@ -29,10 +32,10 @@ internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
 
     private fun String.toHtml(): String {
         return StringBuilder().apply {
-            append("<html><div width=$WIDTH>")
-            append("<font face=\"$FONT\">")
+            append(HEADER)
+            append(FONT)
             append(this@toHtml)
-            append("</font></div></html>")
+            append(FOOTER)
         }.toString()
     }
 
