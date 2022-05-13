@@ -92,16 +92,9 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun updateMoreDetailsInfo(artist: Artist) {
         updateMoreDetailsState(artist)
-        textFormatter()
         updateDescriptionSongPane()
         updateImageLoaderLastfm()
     }
-
-    private fun textFormatter(): String =
-        lastFMArtistBioParser.parseArtistBioToDisplayableHtml(
-            moreDetailsState.bio,
-            moreDetailsState.artist
-        )
 
     private fun updateDescriptionSongPane() {
         runOnUiThread {
@@ -128,7 +121,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun updateSongMoreDetailsState(artist: Artist) {
         moreDetailsState = moreDetailsState.copy(
             artist = artist.name,
-            bio = artist.info,
+            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(artist),
             url = artist.url,
             actionsEnabled = true
         )
@@ -157,4 +150,3 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
 }
-
