@@ -20,7 +20,7 @@ import com.squareup.picasso.Picasso
 interface MoreDetailsView {
 
     val moreDetailsEventObservable: Observable<MoreDetailsEvent>
-    var moreDetailsState: MoreDetailsState
+    val moreDetailsState: MoreDetailsState
 
     fun openArticleLink(url: String)
 }
