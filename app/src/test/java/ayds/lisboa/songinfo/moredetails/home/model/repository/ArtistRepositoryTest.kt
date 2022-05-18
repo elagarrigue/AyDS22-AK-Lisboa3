@@ -1,6 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
+import ayds.lisboa.songinfo.home.model.entities.SpotifySong
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 import io.mockk.every
@@ -26,6 +28,19 @@ class ArtistRepositoryTest {
         val result = artistRepository.getArtistByName("name")
 
         assertEquals(EmptyArtist, result)
+    }
+
+    @Test
+    fun `given existing artist by name in the database should return artist and mark it as local`() {
+        val artist= LastFMArtist(
+            "name", "url","info", false
+        )
+        every { lastFMLocalStorage.getArtistByName("name") } returns artist
+
+        val result = artistRepository.getArtistByName("name")
+
+        assertEquals(artist, result)
+        assertTrue(artist.isLocallyStored)
     }
 
     @Test
