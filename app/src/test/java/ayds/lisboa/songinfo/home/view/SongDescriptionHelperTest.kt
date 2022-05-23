@@ -3,17 +3,14 @@ package ayds.lisboa.songinfo.home.view
 import ayds.lisboa.songinfo.home.model.entities.ReleaseDatePrecision
 import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.home.model.entities.SpotifySong
-import ayds.lisboa.songinfo.home.model.repository.external.spotify.SpotifyTrackService
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+
 class SongDescriptionHelperTest {
 
-    private val songDescriptionDate: SongDescriptionDate = mockk(relaxUnitFun = true)
-    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(songDescriptionDate) }
+    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(SongDescriptionDateImpl()) }
 
     @Test
     fun `given a local song it should return the description`() {
@@ -23,20 +20,19 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
-            ReleaseDatePrecision.YEAR,
+            ReleaseDatePrecision.DAY,
             "url",
             "url",
             true,
         )
-        every { songDescriptionDate.getReleaseDataByPrecision(song) } returns "1992 (a leap year)"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 
         val expected =
             "Song: Plush [*]\n" +
-                "Artist: Stone Temple Pilots\n" +
-                "Album: Core\n" +
-                "Release date: 1992 (a leap year)"
+            "Artist: Stone Temple Pilots\n" +
+            "Album: Core\n" +
+            "Release date: 01/01/1992"
 
         assertEquals(expected, result)
     }
@@ -50,20 +46,19 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
-            ReleaseDatePrecision.YEAR,
+            ReleaseDatePrecision.DAY,
             "url",
             "url",
             false,
         )
-        every { songDescriptionDate.getReleaseDataByPrecision(song) } returns "1992 (a leap year)"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 
         val expected =
             "Song: Plush \n" +
-                "Artist: Stone Temple Pilots\n" +
-                "Album: Core\n" +
-                "Release date: 1992 (a leap year)"
+            "Artist: Stone Temple Pilots\n" +
+            "Album: Core\n" +
+            "Release date: 01/01/1992"
 
         assertEquals(expected, result)
     }

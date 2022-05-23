@@ -22,10 +22,10 @@ class LastFMArtistBioParserImplTest {
         val result = lastFMArtistBioParserImpl.parseArtistBioToDisplayableHtml(artist)
 
         val expected =
-            HtmlCompat.fromHtml(
-                "bio", HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-
+            "<html><div width=400>" +
+            "<font face=\"arial\">" +
+            "bio" +
+            "</font></div></html>"
 
         Assert.assertEquals(expected, result)
     }
