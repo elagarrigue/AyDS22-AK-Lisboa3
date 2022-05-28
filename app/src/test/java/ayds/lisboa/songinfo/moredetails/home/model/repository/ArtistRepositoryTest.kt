@@ -1,10 +1,9 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
-import ayds.lisboa.songinfo.home.model.entities.EmptySong
-import ayds.lisboa.songinfo.home.model.entities.SpotifySong
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
-import ayds.lisboa.songinfo.moredetails.home.model.repository.external.lastfm.LastFMService
+import ayds.lisboa.lastfmdata.lastfm.LastFMService
+import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 import io.mockk.every
 import io.mockk.mockk
@@ -50,8 +49,9 @@ class ArtistRepositoryTest {
         val artist = LastFMArtist(
             "name", "url","info", false
         )
+        val externalArtist = ExternalArtist("name", "url", "info")
         every { lastFMLocalStorage.getArtistByName("name") } returns null
-        every { lastFMService.getArtist("name") } returns artist
+        every { lastFMService.getArtist("name") } returns externalArtist
 
         val result = artistRepository.getArtistByName("name")
 
