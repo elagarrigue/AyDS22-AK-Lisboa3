@@ -5,6 +5,10 @@ interface Card {
     val url: String
     val info: String
     var isLocallyStored: Boolean
+    val description: String
+    val infoUrl: String
+    val source: String
+    val sourceLogoUrl: String
 }
 
 data class LastFMCard(
