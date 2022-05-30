@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.home.model
 
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.repository.ArtistRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -15,16 +15,16 @@ class MoreDetailsModelTest {
 
     @Test
     fun `on search artist it should notify the result`() {
-        val artist: Artist = mockk()
-        every { repository.getArtistByName("name") } returns artist
-        val artistTester: (Artist) -> Unit = mockk(relaxed = true)
-        moreDetailsModel.artistObservable.subscribe {
-            artistTester(artist)
+        val card: Card = mockk()
+        every { repository.getArtistByName("name") } returns card
+        val artistTester: (Card) -> Unit = mockk(relaxed = true)
+        moreDetailsModel.cardObservable.subscribe {
+            artistTester(card)
         }
 
         moreDetailsModel.searchArtist("name")
 
-        verify { artistTester(artist) }
+        verify { artistTester(card) }
     }
 
 }

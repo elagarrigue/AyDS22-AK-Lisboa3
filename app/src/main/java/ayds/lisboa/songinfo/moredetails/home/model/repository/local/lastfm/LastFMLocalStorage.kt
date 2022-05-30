@@ -1,10 +1,10 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm
 
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
 
 interface LastFMLocalStorage {
-    fun insertArtist(artist: LastFMArtist)
+    fun insertArtist(artist: LastFMCard)
 
-    fun getArtistByName(term: String): LastFMArtist?
+    fun getArtistByName(term: String): LastFMCard?
 
 }

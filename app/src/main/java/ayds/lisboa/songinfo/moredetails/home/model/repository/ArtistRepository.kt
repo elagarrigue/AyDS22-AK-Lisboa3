@@ -1,14 +1,14 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
+import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 
 interface ArtistRepository {
-    fun getArtistByName(artistName: String): Artist
+    fun getArtistByName(artistName: String): Card
 }
 
 internal class ArtistRepositoryImpl(
@@ -16,7 +16,7 @@ internal class ArtistRepositoryImpl(
     private val lastFMService: LastFMService
 ) : ArtistRepository {
 
-    override fun getArtistByName(artistName: String): Artist {
+    override fun getArtistByName(artistName: String): Card {
         var lastFMArtist = lastFMLocalStorage.getArtistByName(artistName)
 
         when {
@@ -36,15 +36,15 @@ internal class ArtistRepositoryImpl(
             }
         }
 
-        return lastFMArtist ?: EmptyArtist
+        return lastFMArtist ?: EmptyCard
     }
 
-    private fun markArtistAsLocal(artist: LastFMArtist) {
+    private fun markArtistAsLocal(artist: LastFMCard) {
         artist.isLocallyStored = true
     }
 
-    private fun adaptLastFMArtist(lastFMArtist: ExternalArtist): LastFMArtist {
-        return LastFMArtist(
+    private fun adaptLastFMArtist(lastFMArtist: ExternalArtist): LastFMCard {
+        return LastFMCard(
             lastFMArtist.name,
             lastFMArtist.url,
             lastFMArtist.info,

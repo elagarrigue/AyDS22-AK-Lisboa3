@@ -1,25 +1,24 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
-import androidx.core.text.HtmlCompat
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
 import org.junit.Assert
 import org.junit.Test
 
-class LastFMArtistBioParserImplTest {
+class LastFMCardBioParserImplTest {
 
     private val lastFMArtistBioParserImpl by lazy { LastFMArtistBioParserImpl() }
 
     @Test
     fun `given an artist it should return the bio formatted`() {
-        val artist: Artist = LastFMArtist(
+        val card: Card = LastFMCard(
             "name",
             "url",
             "bio",
             true,
         )
 
-        val result = lastFMArtistBioParserImpl.parseArtistBioToDisplayableHtml(artist)
+        val result = lastFMArtistBioParserImpl.parseArtistBioToDisplayableHtml(card)
 
         val expected =
             "<html><div width=400>" +
