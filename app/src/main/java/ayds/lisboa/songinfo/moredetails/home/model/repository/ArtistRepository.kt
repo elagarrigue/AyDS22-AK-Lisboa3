@@ -46,8 +46,8 @@ internal class ArtistRepositoryImpl(
     private fun adaptLastFMArtist(lastFMArtist: ExternalArtist): LastFMCard {
         return LastFMCard(
             lastFMArtist.name,
-            lastFMArtist.url,
-            lastFMArtist.info,
+            lastFMArtist.infoUrl,
+            lastFMArtist.description,
         )
     }
 
