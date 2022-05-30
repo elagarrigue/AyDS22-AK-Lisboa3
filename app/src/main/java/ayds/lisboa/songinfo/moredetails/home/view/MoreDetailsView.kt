@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Artist
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyArtist
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
+import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
@@ -86,12 +86,12 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun initObservers() {
-        moreDetailsModel.artistObservable
+        moreDetailsModel.cardObservable
             .subscribe { value -> updateMoreDetailsInfo(value) }
     }
 
-    private fun updateMoreDetailsInfo(artist: Artist) {
-        updateMoreDetailsState(artist)
+    private fun updateMoreDetailsInfo(card: Card) {
+        updateMoreDetailsState(card)
         updateDescriptionSongPane()
         updateImageLoaderLastfm()
     }
@@ -111,18 +111,18 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         }
     }
 
-    private fun updateMoreDetailsState(artist: Artist) {
-        when (artist) {
-            is LastFMArtist -> updateSongMoreDetailsState(artist)
-            EmptyArtist -> updateNoResultsMoreDetailsState()
+    private fun updateMoreDetailsState(card: Card) {
+        when (card) {
+            is LastFMCard -> updateSongMoreDetailsState(card)
+            EmptyCard -> updateNoResultsMoreDetailsState()
         }
     }
 
-    private fun updateSongMoreDetailsState(artist: Artist) {
+    private fun updateSongMoreDetailsState(card: Card) {
         moreDetailsState = moreDetailsState.copy(
-            artist = artist.name,
-            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(artist),
-            url = artist.url,
+            artist = card.name,
+            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(card),
+            url = card.url,
             actionsEnabled = true
         )
     }
