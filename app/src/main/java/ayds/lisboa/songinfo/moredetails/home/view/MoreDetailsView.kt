@@ -12,6 +12,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
@@ -34,6 +35,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
 
+    private lateinit var sourceActual: TextView
     private lateinit var imageView: ImageView
     private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
@@ -66,6 +68,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun initProperties() {
+        sourceActual = findViewById(R.id.sourceActual)
         descriptionSongPane = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
         viewArticleButton = findViewById(R.id.openUrlButton)
@@ -92,8 +95,34 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun updateMoreDetailsInfo(card: Card) {
         updateMoreDetailsState(card)
+        updateSourceLabel(card)
         updateDescriptionSongPane()
         updateImageLoaderLastfm()
+    }
+
+    private fun updateSourceLabel(card: Card) {
+        when(card.source) {
+            Source.WIKIPEDIA -> {
+                sourceActual.text=HtmlCompat.fromHtml(
+                    "Wikipedia", HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
+            Source.LASTFM  -> {
+                sourceActual.text=HtmlCompat.fromHtml(
+                    "LastFm", HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
+            Source.NEW_YORK_TIMES  -> {
+                sourceActual.text=HtmlCompat.fromHtml(
+                    "New York Times", HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
+            else -> {
+                sourceActual.text=HtmlCompat.fromHtml(
+                    "Indefinido", HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
+        }
     }
 
     private fun updateDescriptionSongPane() {
