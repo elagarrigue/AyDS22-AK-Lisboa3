@@ -17,8 +17,8 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper {
                 if (moveToNext()) {
                     LastFMCard(
                         name = getString(getColumnIndexOrThrow(NAME_COLUMN)),
-                        url = getString(getColumnIndexOrThrow(URL_COLUMN)),
-                        info = getString(getColumnIndexOrThrow(INFO_COLUMN)),
+                        infoUrl = getString(getColumnIndexOrThrow(URL_COLUMN)),
+                        description = getString(getColumnIndexOrThrow(INFO_COLUMN)),
                     )
                 } else {
                     null

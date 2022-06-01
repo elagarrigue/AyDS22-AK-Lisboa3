@@ -32,8 +32,8 @@ class LastFMLocalStorageImpl(
     override fun insertArtist(artist: LastFMCard) {
         val values = ContentValues().apply {
             put(NAME_COLUMN, artist.name)
-            put(URL_COLUMN, artist.url)
-            put(INFO_COLUMN, artist.info)
+            put(URL_COLUMN, artist.infoUrl)
+            put(INFO_COLUMN, artist.description)
             put(SOURCE_COLUMN, 1)
         }
 

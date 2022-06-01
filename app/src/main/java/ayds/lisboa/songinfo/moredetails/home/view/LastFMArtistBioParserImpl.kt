@@ -16,7 +16,7 @@ private const val FOOTER = "</font></div></html>"
 internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
 
     override fun parseArtistBioToDisplayableHtml(card: Card): String {
-        val boldedArtistBio = card.info.getBoldText(card.name)
+        val boldedArtistBio = card.description.getBoldText(card.name)
         return boldedArtistBio.toHtml()
     }
 

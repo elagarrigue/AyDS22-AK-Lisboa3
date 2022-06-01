@@ -151,7 +151,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         moreDetailsState = moreDetailsState.copy(
             artist = card.name,
             bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(card),
-            url = card.url,
+            url = card.infoUrl,
             actionsEnabled = true
         )
     }
