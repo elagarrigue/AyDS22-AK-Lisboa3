@@ -2,14 +2,16 @@ package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqld
 
 import android.database.Cursor
 import android.database.SQLException
+import ayds.lisboa.songinfo.home.model.repository.local.spotify.sqldb.RELEASE_DATE_PRECISION_COLUMN
 import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 
-interface CursorToArtistMapper {
+interface CursorToCardMapper {
 
     fun map(cursor: Cursor): LastFMCard?
 }
 
-internal class CursorToArtistMapperImpl : CursorToArtistMapper {
+internal class CursorToCardMapperImpl : CursorToCardMapper {
 
     override fun map(cursor: Cursor): LastFMCard? =
         try {
@@ -18,7 +20,9 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper {
                     LastFMCard(
                         name = getString(getColumnIndexOrThrow(NAME_COLUMN)),
                         infoUrl = getString(getColumnIndexOrThrow(URL_COLUMN)),
-                        description = getString(getColumnIndexOrThrow(INFO_COLUMN)),
+                        description = getString(getColumnIndexOrThrow(DESCRIPTION_COLUMN)),
+                        source = getCardSource(),
+                        sourceLogoUrl = getString(getColumnIndexOrThrow(LOGO_COLUMN))
                     )
                 } else {
                     null
@@ -28,4 +32,13 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper {
             e.printStackTrace()
             null
         }
+
+    private fun Cursor.getCardSource() =
+        Source.values()[
+                getInt(
+                    getColumnIndexOrThrow(
+                        RELEASE_DATE_PRECISION_COLUMN
+                    )
+                )
+        ]
 }

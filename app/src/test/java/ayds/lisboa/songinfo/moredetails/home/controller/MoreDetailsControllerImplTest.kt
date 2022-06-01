@@ -1,6 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.home.controller
 
-import ayds.lisboa.songinfo.moredetails.home.controller.MoreDetailsControllerImpl
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsEvent
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsState
@@ -37,7 +36,7 @@ class MoreDetailsControllerImplTest {
 
         onActionSubject.notify(MoreDetailsEvent.SearchArtist)
 
-        verify { moreDetailsModel.searchArtist("artist") }
+        verify { moreDetailsModel.searchCard("artist") }
     }
 
 

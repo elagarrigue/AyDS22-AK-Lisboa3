@@ -7,47 +7,47 @@ import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 
-interface ArtistRepository {
-    fun getArtistByName(artistName: String): Card
+interface CardRepository {
+    fun getCardByName(cardName: String): Card
 }
 
-internal class ArtistRepositoryImpl(
+internal class CardRepositoryImpl(
     private val lastFMLocalStorage: LastFMLocalStorage,
     private val lastFMService: LastFMService
-) : ArtistRepository {
+) : CardRepository {
 
-    override fun getArtistByName(artistName: String): Card {
-        var lastFMArtist = lastFMLocalStorage.getArtistByName(artistName)
+    override fun getCardByName(cardName: String): Card {
+        var lastFMCard = lastFMLocalStorage.getCardByName(cardName)
 
         when {
-            lastFMArtist != null -> markArtistAsLocal(lastFMArtist)
+            lastFMCard != null -> markArtistAsLocal(lastFMCard)
             else -> {
                 try {
-                    val externalArtist: ExternalArtist? = lastFMService.getArtist(artistName)
+                    val externalArtist: ExternalArtist? = lastFMService.getArtist(cardName)
                     externalArtist?.let {
-                        lastFMArtist = adaptLastFMArtist(it)
+                        lastFMCard = adaptLastFMArtist(it)
                     }
-                    lastFMArtist?.let {
-                        lastFMLocalStorage.insertArtist(it)
+                    lastFMCard?.let {
+                        lastFMLocalStorage.insertCard(it)
                     }
                 } catch (e: Exception) {
-                    lastFMArtist = null
+                    lastFMCard = null
                 }
             }
         }
 
-        return lastFMArtist ?: EmptyCard
+        return lastFMCard ?: EmptyCard
     }
 
     private fun markArtistAsLocal(artist: LastFMCard) {
         artist.isLocallyStored = true
     }
 
-    private fun adaptLastFMArtist(lastFMArtist: ExternalArtist): LastFMCard {
+    private fun adaptLastFMArtist(lastFMCard: ExternalArtist): LastFMCard {
         return LastFMCard(
-            lastFMArtist.name,
-            lastFMArtist.infoUrl,
-            lastFMArtist.description,
+            lastFMCard.name,
+            lastFMCard.infoUrl,
+            lastFMCard.description,
         )
     }
 

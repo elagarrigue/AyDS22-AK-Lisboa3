@@ -1,6 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.home.model.entities
 
-
 enum class Source {
     WIKIPEDIA, LASTFM, NEW_YORK_TIMES ,UNDEFINED
 }

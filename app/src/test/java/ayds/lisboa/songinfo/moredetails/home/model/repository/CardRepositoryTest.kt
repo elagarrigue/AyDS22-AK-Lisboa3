@@ -16,17 +16,17 @@ class CardRepositoryTest {
     private val lastFMLocalStorage: LastFMLocalStorage = mockk(relaxUnitFun = true)
     private val lastFMService: LastFMService = mockk(relaxUnitFun = true)
 
-    private val artistRepository: ArtistRepository = ArtistRepositoryImpl(
+    private val cardRepository: CardRepository = CardRepositoryImpl(
         lastFMLocalStorage,
         lastFMService
     )
 
     @Test
     fun `given non existing artist by name should return empty artist`() {
-        every { lastFMLocalStorage.getArtistByName("name") } returns null
+        every { lastFMLocalStorage.getCardByName("name") } returns null
         every { lastFMService.getArtist("name") } returns null
 
-        val result = artistRepository.getArtistByName("name")
+        val result = cardRepository.getCardByName("name")
 
         assertEquals(EmptyCard, result)
     }
@@ -36,9 +36,9 @@ class CardRepositoryTest {
         val artist= LastFMCard(
             "name", "url","info", false
         )
-        every { lastFMLocalStorage.getArtistByName("name") } returns artist
+        every { lastFMLocalStorage.getCardByName("name") } returns artist
 
-        val result = artistRepository.getArtistByName("name")
+        val result = cardRepository.getCardByName("name")
 
         assertEquals(artist, result)
         assertTrue(artist.isLocallyStored)
@@ -50,22 +50,22 @@ class CardRepositoryTest {
             "name", "url","info", false
         )
         val externalArtist = ExternalArtist("name", "url", "info")
-        every { lastFMLocalStorage.getArtistByName("name") } returns null
+        every { lastFMLocalStorage.getCardByName("name") } returns null
         every { lastFMService.getArtist("name") } returns externalArtist
 
-        val result = artistRepository.getArtistByName("name")
+        val result = cardRepository.getCardByName("name")
 
         assertEquals(artist, result)
         assertFalse(artist.isLocallyStored)
-        verify { lastFMLocalStorage.insertArtist(artist) }
+        verify { lastFMLocalStorage.insertCard(artist) }
     }
 
     @Test
     fun `given service exception should return empty artist`() {
-        every { lastFMLocalStorage.getArtistByName("name") } returns null
+        every { lastFMLocalStorage.getCardByName("name") } returns null
         every { lastFMService.getArtist("name") } throws mockk<Exception>()
 
-        val result = artistRepository.getArtistByName("name")
+        val result = cardRepository.getCardByName("name")
 
         assertEquals(EmptyCard, result)
     }

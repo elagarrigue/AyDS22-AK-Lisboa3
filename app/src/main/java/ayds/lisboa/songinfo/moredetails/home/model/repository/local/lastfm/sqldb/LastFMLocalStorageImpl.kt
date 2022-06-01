@@ -12,7 +12,7 @@ const val DATABASE_VERSION = 1
 
 class LastFMLocalStorageImpl(
     context: Context,
-    private val cursorToArtistMapper: CursorToArtistMapper
+    private val cursorToCardMapper: CursorToCardMapper
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION),
     LastFMLocalStorage{
 
@@ -20,7 +20,9 @@ class LastFMLocalStorageImpl(
         ID_COLUMN,
         URL_COLUMN,
         NAME_COLUMN,
-        INFO_COLUMN
+        DESCRIPTION_COLUMN,
+        SOURCE_COLUMN,
+        LOGO_COLUMN
     )
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -29,29 +31,30 @@ class LastFMLocalStorageImpl(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun insertArtist(artist: LastFMCard) {
+    override fun insertCard(card: LastFMCard) {
         val values = ContentValues().apply {
-            put(NAME_COLUMN, artist.name)
-            put(URL_COLUMN, artist.infoUrl)
-            put(INFO_COLUMN, artist.description)
-            put(SOURCE_COLUMN, 1)
+            put(NAME_COLUMN, card.name)
+            put(URL_COLUMN, card.infoUrl)
+            put(DESCRIPTION_COLUMN, card.description)
+            put(SOURCE_COLUMN, card.source.ordinal)
+            put(LOGO_COLUMN, card.sourceLogoUrl)
         }
 
         writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
 
-    override fun getArtistByName(artist: String): LastFMCard? {
+    override fun getCardByName(card: String): LastFMCard? {
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,
             "$NAME_COLUMN = ?",
-            arrayOf(artist),
+            arrayOf(card),
             null,
             null,
             "$NAME_COLUMN DESC"
         )
 
-        return cursorToArtistMapper.map(cursor)
+        return cursorToCardMapper.map(cursor)
     }
 
 }
