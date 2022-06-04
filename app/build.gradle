@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "ayds.lisboa"
         minSdkVersion 16
-        targetSdk 32
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -55,6 +55,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':lastFMData')
-    implementation project(':wikipediaData')
-    implementation project(':newyorkdata')
 }

@@ -1,6 +1,6 @@
 [submodule "libs/LastFMData"]
 	path = libs/LastFMData
-	url = https://github.com/DylanHughes1/AKLastFMData
+	url = https://github.com/DylanHughes1/AKLastFMData.git
 [submodule "libs/wikipedia"]
 	path = libs/wikipedia
 	url = https://github.com/TomasFelp/wikipedia-module.git
