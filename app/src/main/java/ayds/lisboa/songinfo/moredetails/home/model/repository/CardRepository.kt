@@ -4,7 +4,9 @@ import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
+import ayds.lisboa.songinfo.moredetails.home.model.repository.external.Broker
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 
 interface CardRepository {
@@ -12,8 +14,8 @@ interface CardRepository {
 }
 
 internal class CardRepositoryImpl(
-    private val lastFMLocalStorage: LastFMLocalStorage,
-    private val lastFMService: LastFMService
+    private val localStorage: LocalStorage,
+    private val infoServices: Broker,
 ) : CardRepository {
 
     override fun getCardByName(cardName: String): Card {
