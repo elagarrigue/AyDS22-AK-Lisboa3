@@ -4,7 +4,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

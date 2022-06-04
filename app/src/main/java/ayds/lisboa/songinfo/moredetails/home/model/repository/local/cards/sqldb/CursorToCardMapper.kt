@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb
+package ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb
 
 import android.database.Cursor
 import android.database.SQLException

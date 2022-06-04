@@ -5,9 +5,9 @@ import ayds.lisboa.songinfo.moredetails.home.model.repository.CardRepository
 import ayds.lisboa.songinfo.moredetails.home.model.repository.CardRepositoryImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMInjector
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb.CursorToCardMapperImpl
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb.LastFMLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.CursorToCardMapperImpl
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsView
 
 object MoreDetailsModelInjector {

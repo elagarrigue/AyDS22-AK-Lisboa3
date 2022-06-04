@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.sqldb
+package ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb
 
 const val ARTISTS_TABLE = "artists"
 const val ID_COLUMN = "id"
