@@ -4,6 +4,3 @@
 [submodule "libs/wikipedia"]
 	path = libs/wikipedia
 	url = https://github.com/TomasFelp/wikipedia-module.git
-[submodule "libs/NewYorktimes"]
-	path = libs/NewYorktimes
-	url = https://github.com/FerminAlvarez/NY3-New-York-Times-Data
