@@ -1,10 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards
 
-import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 
-interface LastFMLocalStorage {
-    fun insertCard(card: CardImpl)
-
-    fun getCardByName(term: String): CardImpl?
-
+interface LocalStorage {
+    fun insertCards(cards: List<Card>)
+    fun getCardsByName(term: String): List<Card>
 }
