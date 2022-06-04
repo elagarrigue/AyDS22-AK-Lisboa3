@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
@@ -33,7 +33,7 @@ class CardRepositoryTest {
 
     @Test
     fun `given existing artist by name in the database should return artist and mark it as local`() {
-        val artist= LastFMCard(
+        val artist= CardImpl(
             "name", "url","info", false
         )
         every { lastFMLocalStorage.getCardByName("name") } returns artist
@@ -46,7 +46,7 @@ class CardRepositoryTest {
 
     @Test
     fun `given non existing artist by name should get the artist and store it`() {
-        val artist = LastFMCard(
+        val artist = CardImpl(
             "name", "url","info", false
         )
         val externalArtist = ExternalArtist("name", "url", "info")

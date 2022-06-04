@@ -11,7 +11,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
@@ -142,7 +142,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun updateMoreDetailsState(card: Card) {
         when (card) {
-            is LastFMCard -> updateSongMoreDetailsState(card)
+            is CardImpl -> updateSongMoreDetailsState(card)
             EmptyCard -> updateNoResultsMoreDetailsState()
         }
     }

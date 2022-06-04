@@ -1,17 +1,17 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import org.junit.Assert
 import org.junit.Test
 
-class LastFMCardBioParserImplTest {
+class CardBioParserImplTest {
 
     private val lastFMArtistBioParserImpl by lazy { LastFMArtistBioParserImpl() }
 
     @Test
     fun `given an artist it should return the bio formatted`() {
-        val card: Card = LastFMCard(
+        val card: Card = CardImpl(
             "name",
             "url",
             "bio",

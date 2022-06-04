@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 
 const val DATABASE_NAME = "dictionary.db"
@@ -31,7 +31,7 @@ class LastFMLocalStorageImpl(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun insertCard(card: LastFMCard) {
+    override fun insertCard(card: CardImpl) {
         val values = ContentValues().apply {
             put(NAME_COLUMN, card.name)
             put(URL_COLUMN, card.infoUrl)
@@ -43,7 +43,7 @@ class LastFMLocalStorageImpl(
         writableDatabase.insert(ARTISTS_TABLE, null, values)
     }
 
-    override fun getCardByName(card: String): LastFMCard? {
+    override fun getCardByName(card: String): CardImpl? {
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,

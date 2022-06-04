@@ -2,7 +2,7 @@ package ayds.lisboa.songinfo.moredetails.home.model.repository
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.lastfm.LastFMLocalStorage
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
@@ -39,12 +39,12 @@ internal class CardRepositoryImpl(
         return lastFMCard ?: EmptyCard
     }
 
-    private fun markArtistAsLocal(artist: LastFMCard) {
+    private fun markArtistAsLocal(artist: CardImpl) {
         artist.isLocallyStored = true
     }
 
-    private fun adaptLastFMArtist(lastFMCard: ExternalArtist): LastFMCard {
-        return LastFMCard(
+    private fun adaptLastFMArtist(lastFMCard: ExternalArtist): CardImpl {
+        return CardImpl(
             lastFMCard.name,
             lastFMCard.infoUrl,
             lastFMCard.description,

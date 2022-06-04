@@ -13,7 +13,7 @@ interface Card {
     val sourceLogoUrl: String
 }
 
-data class LastFMCard(
+data class CardImpl(
     override val name: String,
     override val infoUrl: String,
     override val description: String,
