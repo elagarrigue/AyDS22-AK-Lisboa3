@@ -1,16 +1,11 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
-import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
-import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.Broker
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
-import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
 
 interface CardRepository {
-    fun getCardByName(cardName: String): Card
+    fun getCardsByName(cardName: String): List<Card>
 }
 
 internal class CardRepositoryImpl(
@@ -18,39 +13,25 @@ internal class CardRepositoryImpl(
     private val infoServices: Broker,
 ) : CardRepository {
 
-    override fun getCardByName(cardName: String): Card {
-        var lastFMCard = lastFMLocalStorage.getCardByName(cardName)
+    override fun getCardsByName(cardName: String): List<Card> {
+        var cardList = localStorage.getCardsByName(cardName)
 
         when {
-            lastFMCard != null -> markArtistAsLocal(lastFMCard)
+            cardList != null -> markArtistAsLocal(cardList)
             else -> {
-                try {
-                    val externalArtist: ExternalArtist? = lastFMService.getArtist(cardName)
-                    externalArtist?.let {
-                        lastFMCard = adaptLastFMArtist(it)
-                    }
-                    lastFMCard?.let {
-                        lastFMLocalStorage.insertCard(it)
-                    }
-                } catch (e: Exception) {
-                    lastFMCard = null
-                }
+
+                val externalCards = infoServices.getInfoByArtistName(cardName)
+                localStorage.insertCards(externalCards)
+
             }
         }
-
-        return lastFMCard ?: EmptyCard
+        return cardList
     }
 
-    private fun markArtistAsLocal(artist: CardImpl) {
-        artist.isLocallyStored = true
-    }
-
-    private fun adaptLastFMArtist(lastFMCard: ExternalArtist): CardImpl {
-        return CardImpl(
-            lastFMCard.name,
-            lastFMCard.infoUrl,
-            lastFMCard.description,
-        )
+    private fun markArtistAsLocal(cards: List<Card>) {
+        cards.forEach {
+            it.isLocallyStored = true
+        }
     }
 
 }

@@ -3,9 +3,9 @@ package ayds.lisboa.songinfo.moredetails.home.model
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.home.model.repository.CardRepository
 import ayds.lisboa.songinfo.moredetails.home.model.repository.CardRepositoryImpl
-import ayds.lisboa.lastfmdata.lastfm.LastFMInjector
-import ayds.lisboa.lastfmdata.lastfm.LastFMService
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.home.model.repository.external.Broker
+import ayds.lisboa.songinfo.moredetails.home.model.repository.external.BrokerImpl
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.CursorToCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsView
@@ -17,12 +17,12 @@ object MoreDetailsModelInjector {
     fun getMoreDetailsModel(): MoreDetailsModel = moreDetailsModel
 
     fun initMoreDetailsModel(moreDetailsView: MoreDetailsView) {
-        val lastFMLocalStorage: LastFMLocalStorage = LastFMLocalStorageImpl(
+        val localStorage: LocalStorage = LastFMLocalStorageImpl(
             moreDetailsView as Context, CursorToCardMapperImpl()
         )
-        val lastFMService: LastFMService = LastFMInjector.lastFMService
+        val broker: Broker = BrokerImpl()
         val repository: CardRepository =
-            CardRepositoryImpl(lastFMLocalStorage, lastFMService)
+            CardRepositoryImpl(localStorage, broker)
         moreDetailsModel = MoreDetailsModelImpl(repository)
     }
 
