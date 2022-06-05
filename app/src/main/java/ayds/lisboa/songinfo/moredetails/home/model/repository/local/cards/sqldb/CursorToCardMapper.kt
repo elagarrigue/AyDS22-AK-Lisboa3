@@ -2,43 +2,39 @@ package ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb
 
 import android.database.Cursor
 import android.database.SQLException
-import ayds.lisboa.songinfo.home.model.repository.local.spotify.sqldb.RELEASE_DATE_PRECISION_COLUMN
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 
 interface CursorToCardMapper {
 
-    fun map(cursor: Cursor): CardImpl?
+    fun map(cursor: Cursor): List<Card>
 }
 
 internal class CursorToCardMapperImpl : CursorToCardMapper {
 
-    override fun map(cursor: Cursor): CardImpl? =
+    override fun map(cursor: Cursor): List<Card> {
+        val cards = mutableListOf<Card>()
         try {
             with(cursor) {
-                if (moveToNext()) {
-                    CardImpl(
-                        name = getString(getColumnIndexOrThrow(NAME_COLUMN)),
-                        infoUrl = getString(getColumnIndexOrThrow(URL_COLUMN)),
-                        description = getString(getColumnIndexOrThrow(DESCRIPTION_COLUMN)),
-                        source = getCardSource(),
-                        sourceLogoUrl = getString(getColumnIndexOrThrow(LOGO_COLUMN))
-                    )
-                } else {
-                    null
+                while (moveToNext()) {
+                    cards.add(getCard())
                 }
             }
         } catch (e: SQLException) {
-            e.printStackTrace()
-            null
         }
+        return cards
+    }
 
-    private fun Cursor.getCardSource() =
-        Source.values()[
-                getInt(
-                    getColumnIndexOrThrow(
-                        RELEASE_DATE_PRECISION_COLUMN
-                    )
-                )
-        ]
+    private fun Cursor.getCard() = CardImpl(
+        name = getString(getColumnIndexOrThrow(NAME_COLUMN)),
+        infoUrl = getString(getColumnIndexOrThrow(URL_COLUMN)),
+        description = getString(getColumnIndexOrThrow(DESCRIPTION_COLUMN)),
+        source = Source.values()[getInt(
+            getColumnIndexOrThrow(
+                SOURCE_COLUMN
+            )
+        )],
+        sourceLogoUrl = getString(getColumnIndexOrThrow(LOGO_COLUMN))
+    )
 }

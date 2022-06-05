@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.home.model.entities.LastFMCard
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
 
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1
@@ -14,7 +14,7 @@ class LastFMLocalStorageImpl(
     context: Context,
     private val cursorToCardMapper: CursorToCardMapper
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION),
-    LastFMLocalStorage{
+    LocalStorage {
 
     private val projection = arrayOf(
         ID_COLUMN,
@@ -31,7 +31,14 @@ class LastFMLocalStorageImpl(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun insertCard(card: LastFMCard) {
+    override fun insertCards(cards: List<Card>) {
+        cards.forEach {
+            val values = getValues(it)
+            writableDatabase.insert(ARTISTS_TABLE, null, values)
+        }
+    }
+
+    private fun getValues(card: Card): ContentValues {
         val values = ContentValues().apply {
             put(NAME_COLUMN, card.name)
             put(URL_COLUMN, card.infoUrl)
@@ -39,16 +46,15 @@ class LastFMLocalStorageImpl(
             put(SOURCE_COLUMN, card.source.ordinal)
             put(LOGO_COLUMN, card.sourceLogoUrl)
         }
-
-        writableDatabase.insert(ARTISTS_TABLE, null, values)
+        return values
     }
 
-    override fun getCardByName(card: String): LastFMCard? {
+    override fun getCardsByName(term: String): List<Card> {
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,
             "$NAME_COLUMN = ?",
-            arrayOf(card),
+            arrayOf(term),
             null,
             null,
             "$NAME_COLUMN DESC"
