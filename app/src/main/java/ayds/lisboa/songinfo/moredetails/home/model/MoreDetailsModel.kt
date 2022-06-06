@@ -6,7 +6,7 @@ import ayds.observer.Observable
 import ayds.observer.Subject
 
 interface MoreDetailsModel {
-    val cardObservable: Observable<Card>
+    val cardObservable: Observable<List<Card>>
     fun searchCard(name: String)
 }
 
@@ -14,10 +14,10 @@ internal class MoreDetailsModelImpl(
     private val repository: CardRepository
 ) : MoreDetailsModel {
 
-    override val cardObservable = Subject<Card>()
+    override val cardObservable = Subject<List<Card>>()
 
     override fun searchCard(name: String) {
-        repository.getCardByName(name).let {
+        repository.getCardsByName(name).let {
             cardObservable.notify(it)
         }
     }
