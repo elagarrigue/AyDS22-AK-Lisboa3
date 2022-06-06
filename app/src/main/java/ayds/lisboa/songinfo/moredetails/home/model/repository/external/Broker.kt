@@ -9,15 +9,13 @@ interface Broker {
     fun getInfoByArtistName(name: String): List<Card>
 }
 
-internal class BrokerImpl(private var proxyList: LinkedList<ProxyService>) : Broker {
+internal class BrokerImpl(private val proxyList: List<ProxyService>) : Broker {
 
-    private var infoList = LinkedList<CardImpl>()
+    private val infoList = mutableListOf<Card>()
 
-    override fun getInfoByArtistName(name: String): List<CardImpl> {
-
-        var card: Card
+    override fun getInfoByArtistName(name: String): List<Card> {
         proxyList.forEach {
-            card = it.getCard(name)
+            val card = it.getCard(name)
             insertCardFromProxy(card)
         }
         return infoList
