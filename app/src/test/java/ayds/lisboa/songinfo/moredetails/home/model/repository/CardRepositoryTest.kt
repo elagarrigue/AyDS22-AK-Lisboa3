@@ -3,8 +3,9 @@ package ayds.lisboa.songinfo.moredetails.home.model.repository
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.lastfmdata.lastfm.LastFMService
+import ayds.lisboa.songinfo.moredetails.home.model.repository.external.Broker
+import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
-import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LastFMLocalStorage
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,12 +14,12 @@ import org.junit.Assert.*
 
 class CardRepositoryTest {
 
-    private val lastFMLocalStorage: LastFMLocalStorage = mockk(relaxUnitFun = true)
-    private val lastFMService: LastFMService = mockk(relaxUnitFun = true)
+    private val artistsLocalStorage: LocalStorage = mockk(relaxUnitFun = true)
+    private val artistsInfoBroker: Broker = mockk(relaxUnitFun = true)
 
     private val cardRepository: CardRepository = CardRepositoryImpl(
-        lastFMLocalStorage,
-        lastFMService
+        artistsLocalStorage,
+        artistsInfoBroker
     )
 
     @Test
