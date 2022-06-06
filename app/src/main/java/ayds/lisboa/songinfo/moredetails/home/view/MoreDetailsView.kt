@@ -140,26 +140,28 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun updateSourceLabel(card: Card) {
-        when (card.source) {
-            Source.WIKIPEDIA -> {
-                sourceActual.text = HtmlCompat.fromHtml(
-                    "Wikipedia", HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-            }
-            Source.LASTFM -> {
-                sourceActual.text = HtmlCompat.fromHtml(
-                    "LastFm", HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-            }
-            Source.NEW_YORK_TIMES -> {
-                sourceActual.text = HtmlCompat.fromHtml(
-                    "New York Times", HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-            }
-            else -> {
-                sourceActual.text = HtmlCompat.fromHtml(
-                    "Undefined", HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
+        runOnUiThread {
+            when (card.source) {
+                Source.WIKIPEDIA -> {
+                    sourceActual.text = HtmlCompat.fromHtml(
+                        "Wikipedia", HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                }
+                Source.LASTFM -> {
+                    sourceActual.text = HtmlCompat.fromHtml(
+                        "LastFm", HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                }
+                Source.NEW_YORK_TIMES -> {
+                    sourceActual.text = HtmlCompat.fromHtml(
+                        "New York Times", HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                }
+                else -> {
+                    sourceActual.text = HtmlCompat.fromHtml(
+                        "Undefined", HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                }
             }
         }
     }
