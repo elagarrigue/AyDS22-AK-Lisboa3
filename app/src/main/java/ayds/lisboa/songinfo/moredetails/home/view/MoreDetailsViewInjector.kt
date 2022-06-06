@@ -6,7 +6,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 
 object MoreDetailsViewInjector {
 
-    val LastFMArtistBioParser: LastFMArtistBioParser = LastFMArtistBioParserImpl()
+    val artistBioParser: ArtistBioParser = ArtistBioParserImpl()
 
     fun init(moreDetailsView: MoreDetailsView) {
         MoreDetailsModelInjector.initMoreDetailsModel(moreDetailsView)

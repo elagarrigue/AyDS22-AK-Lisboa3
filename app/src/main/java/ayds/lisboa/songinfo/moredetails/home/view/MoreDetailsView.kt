@@ -1,17 +1,17 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
-import android.widget.TextView
 import android.os.Bundle
-import ayds.lisboa.songinfo.R
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
+import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
@@ -39,8 +39,8 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private lateinit var imageView: ImageView
     private lateinit var viewArticleButton: Button
     private lateinit var descriptionSongPane: TextView
-    private val lastFMArtistBioParser: LastFMArtistBioParser =
-        MoreDetailsViewInjector.LastFMArtistBioParser
+    private val artistBioParser: ArtistBioParser =
+        MoreDetailsViewInjector.artistBioParser
     override val moreDetailsEventObservable: Observable<MoreDetailsEvent> = onActionSubject
     override var moreDetailsState: MoreDetailsState = MoreDetailsState()
 
@@ -150,7 +150,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun updateSongMoreDetailsState(card: Card) {
         moreDetailsState = moreDetailsState.copy(
             artist = card.name,
-            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(card),
+            bio = artistBioParser.parseArtistBioToDisplayableHtml(card),
             url = card.infoUrl,
             actionsEnabled = true
         )
