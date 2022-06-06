@@ -1,10 +1,9 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import java.lang.StringBuilder
 import java.util.*
 
-interface LastFMArtistBioParser {
+interface ArtistBioParser {
     fun parseArtistBioToDisplayableHtml(card: Card): String
 }
 
@@ -13,7 +12,7 @@ private const val HEADER = "<html><div width=$WIDTH>"
 private const val FONT = "<font face=\"arial\">"
 private const val FOOTER = "</font></div></html>"
 
-internal class LastFMArtistBioParserImpl : LastFMArtistBioParser {
+internal class ArtistBioParserImpl : ArtistBioParser {
 
     override fun parseArtistBioToDisplayableHtml(card: Card): String {
         val boldedArtistBio = card.description.getBoldText(card.name)
