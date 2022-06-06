@@ -14,9 +14,7 @@ import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalS
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.CursorToCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.home.view.MoreDetailsView
-import ayds.ny3.newyorktimes.NytArticleService
 import ayds.ny3.newyorktimes.NytInjector
-import ayds.winchester2.wikipedia.ExternalRepository
 import ayds.winchester2.wikipedia.WikipediaInjector
 import java.util.*
 
@@ -37,32 +35,16 @@ object MoreDetailsModelInjector {
     private fun initProxyServiceList(): LinkedList<ProxyService>{
         val proxyList: LinkedList<ProxyService> = LinkedList<ProxyService>()
 
-        initLastFMProxy(proxyList)
-        initNytProxy(proxyList)
-        initWikipediaProxy(proxyList)
+        val lastFMProxy :ProxyService = LastFMProxy(LastFMInjector.lastFMService)
+        proxyList.add(lastFMProxy)
+
+        val nytProxy: ProxyService = NYTProxy(NytInjector.nytArticleService)
+        proxyList.add(nytProxy)
+
+        val wikipediaProxy: ProxyService = WikipediaProxy(WikipediaInjector.wikipediaService)
+        proxyList.add(wikipediaProxy)
 
         return proxyList
-    }
-
-    private fun initLastFMProxy(proxyList: LinkedList<ProxyService>){
-        val lastFMInjector = LastFMInjector
-        val lastFMService: LastFMService = lastFMInjector.lastFMService
-        val lastFMProxy :ProxyService = LastFMProxy(lastFMService)
-        proxyList.add(lastFMProxy)
-    }
-
-    private fun initNytProxy(proxyList: LinkedList<ProxyService>){
-        val nytInjector = NytInjector
-        val nytArticleService: NytArticleService = nytInjector.nytArticleService
-        val nytProxy: ProxyService = NYTProxy(nytArticleService)
-        proxyList.add(nytProxy)
-    }
-
-    private fun initWikipediaProxy(proxyList: LinkedList<ProxyService>){
-        val wikipediaInjector = WikipediaInjector
-        val wikipediaService: ExternalRepository = wikipediaInjector.wikipediaService
-        val wikipediaProxy: ProxyService = WikipediaProxy(wikipediaService)
-        proxyList.add(wikipediaProxy)
     }
 
 }
