@@ -1,11 +1,10 @@
 package ayds.lisboa.songinfo.moredetails.home.model.repository
 
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
-import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.songinfo.moredetails.home.model.repository.external.Broker
 import ayds.lisboa.songinfo.moredetails.home.model.repository.local.cards.LocalStorage
-import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist as ExternalArtist
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
+import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,52 +22,44 @@ class CardRepositoryTest {
     )
 
     @Test
-    fun `given non existing artist by name should return empty artist`() {
-        every { lastFMLocalStorage.getCardByName("name") } returns null
-        every { lastFMService.getArtist("name") } returns null
+    fun `given non existing artist by name should return empty cards list`() {
+        every { artistsLocalStorage.getCardsByName("name") } returns listOf<Card>()
+        every { artistsInfoBroker.getInfoByArtistName("name") } returns listOf<Card>()
 
-        val result = cardRepository.getCardByName("name")
+        val result = cardRepository.getCardsByName("name")
+        val emptyListOfCards = listOf<Card>()
 
-        assertEquals(EmptyCard, result)
+        assertEquals(emptyListOfCards, result)
     }
 
     @Test
     fun `given existing artist by name in the database should return artist and mark it as local`() {
-        val artist= CardImpl(
-            "name", "url","info", false
+        val artist = CardImpl(
+            "name", "url","info", true, Source.LASTFM, "logoUrl"
         )
-        every { lastFMLocalStorage.getCardByName("name") } returns artist
+        val artists = listOf<Card>(artist)
+        every { artistsLocalStorage.getCardsByName("name") } returns artists
 
-        val result = cardRepository.getCardByName("name")
+        val result = cardRepository.getCardsByName("name")
 
-        assertEquals(artist, result)
+        assertEquals(artists, result)
         assertTrue(artist.isLocallyStored)
     }
 
     @Test
     fun `given non existing artist by name should get the artist and store it`() {
         val artist = CardImpl(
-            "name", "url","info", false
+            "name", "url","info", false, Source.LASTFM, "logoUrl"
         )
-        val externalArtist = ExternalArtist("name", "url", "info")
-        every { lastFMLocalStorage.getCardByName("name") } returns null
-        every { lastFMService.getArtist("name") } returns externalArtist
+        val artists = listOf<Card>(artist)
 
-        val result = cardRepository.getCardByName("name")
+        every { artistsLocalStorage.getCardsByName("name") } returns listOf()
+        every { artistsInfoBroker.getInfoByArtistName("name") } returns artists
 
-        assertEquals(artist, result)
+        val result = cardRepository.getCardsByName("name")
+
+        assertEquals(artists, result)
         assertFalse(artist.isLocallyStored)
-        verify { lastFMLocalStorage.insertCard(artist) }
+        verify { artistsLocalStorage.insertCards(artists) }
     }
-
-    @Test
-    fun `given service exception should return empty artist`() {
-        every { lastFMLocalStorage.getCardByName("name") } returns null
-        every { lastFMService.getArtist("name") } throws mockk<Exception>()
-
-        val result = cardRepository.getCardByName("name")
-
-        assertEquals(EmptyCard, result)
-    }
-
 }
