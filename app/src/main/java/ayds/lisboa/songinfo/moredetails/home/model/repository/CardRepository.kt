@@ -17,7 +17,7 @@ internal class CardRepositoryImpl(
         var cardList = localStorage.getCardsByName(cardName)
 
         when {
-            cardList != null -> markArtistAsLocal(cardList)
+            cardList.isNotEmpty() -> markArtistAsLocal(cardList)
             else -> {
 
                 val externalCards = infoServices.getInfoByArtistName(cardName)
