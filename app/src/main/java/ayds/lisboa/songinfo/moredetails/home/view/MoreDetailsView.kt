@@ -10,7 +10,6 @@ import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
-import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
@@ -74,6 +73,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA) ?: ""
         moreDetailsState = moreDetailsState.copy(artist = artistName)
     }
+
     private fun initProperties() {
 
 
@@ -134,35 +134,16 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun updateMoreDetailsInfo(card: Card) {
         updateMoreDetailsState(card)
-        updateSourceLabel(card)
+        updateSourceLabel()
         updateDescriptionSongPane()
         updateImageLoaderLastfm()
     }
 
-    private fun updateSourceLabel(card: Card) {
+    private fun updateSourceLabel() {
         runOnUiThread {
-            when (card.source) {
-                Source.WIKIPEDIA -> {
-                    sourceActual.text = HtmlCompat.fromHtml(
-                        "Wikipedia", HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                }
-                Source.LASTFM -> {
-                    sourceActual.text = HtmlCompat.fromHtml(
-                        "LastFm", HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                }
-                Source.NEW_YORK_TIMES -> {
-                    sourceActual.text = HtmlCompat.fromHtml(
-                        "New York Times", HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                }
-                else -> {
-                    sourceActual.text = HtmlCompat.fromHtml(
-                        "Undefined", HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                }
-            }
+            sourceActual.text = HtmlCompat.fromHtml(moreDetailsState.source.description,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         }
     }
 

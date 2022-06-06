@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.home.model.entities
 
-enum class Source {
-    WIKIPEDIA, LASTFM, NEW_YORK_TIMES, UNDEFINED
+enum class Source(val description: String) {
+    WIKIPEDIA("Wikipedia"), LASTFM("LastFM"), NEW_YORK_TIMES("New York Times"), UNDEFINED("Undefined")
 }
 
 interface Card {
