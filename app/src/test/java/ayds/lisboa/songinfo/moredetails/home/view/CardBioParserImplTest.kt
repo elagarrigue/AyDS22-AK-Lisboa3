@@ -2,28 +2,31 @@ package ayds.lisboa.songinfo.moredetails.home.view
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
+import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard.source
 import org.junit.Assert
 import org.junit.Test
 
 class CardBioParserImplTest {
 
-    private val lastFMArtistBioParserImpl by lazy { LastFMArtistBioParserImpl() }
+    private val artistBioParserImpl by lazy { ArtistBioParserImpl() }
 
     @Test
     fun `given an artist it should return the bio formatted`() {
         val card: Card = CardImpl(
             "name",
-            "url",
-            "bio",
+            "infoUrl",
+            "description",
             true,
+            source,
+            "sourceLogoUrl"
         )
 
-        val result = lastFMArtistBioParserImpl.parseArtistBioToDisplayableHtml(card)
+        val result = artistBioParserImpl.parseArtistBioToDisplayableHtml(card)
 
         val expected =
             "<html><div width=400>" +
             "<font face=\"arial\">" +
-            "bio" +
+            "description" +
             "</font></div></html>"
 
         Assert.assertEquals(expected, result)
