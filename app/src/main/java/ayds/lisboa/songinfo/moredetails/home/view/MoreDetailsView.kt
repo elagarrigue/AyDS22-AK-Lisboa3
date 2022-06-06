@@ -26,6 +26,10 @@ interface MoreDetailsView {
 
 class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
+    }
+
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
 
@@ -53,6 +57,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         setContentView(R.layout.activity_other_info)
 
         initModule()
+        initState()
         initProperties()
         initListeners()
         initObservers()
@@ -65,6 +70,10 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     }
 
+    private fun initState() {
+        val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA) ?: ""
+        moreDetailsState = moreDetailsState.copy(artist = artistName)
+    }
     private fun initProperties() {
 
 
