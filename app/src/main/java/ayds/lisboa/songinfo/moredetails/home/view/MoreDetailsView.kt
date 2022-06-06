@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import ayds.lisboa.songinfo.R
 import androidx.appcompat.app.AppCompatActivity
@@ -30,9 +29,9 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
 
-    private lateinit var botonSiguiente: Button
+    private lateinit var next: Button
 
-    private lateinit var listaDeCards: List<Card>
+    private lateinit var cards: List<Card>
 
     private lateinit var sourceActual: TextView
 
@@ -81,7 +80,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         viewArticleButton =
             findViewById(R.id.openUrlButton)
 
-        botonSiguiente =
+        next =
             findViewById(R.id.button)
 
     }
@@ -90,8 +89,8 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         viewArticleButton.setOnClickListener {
             notifyOpenURLAction()
         }
-        botonSiguiente.setOnClickListener {
-            calcularSiguiente()
+        next.setOnClickListener {
+            updateNextService()
             updateMoreDetailsInfo(cardActual)
         }
 
@@ -101,12 +100,12 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
         navigationUtils.openExternalUrl(this, url)
     }
 
-    private fun calcularSiguiente() {
-        if (cardActual != listaDeCards.last()) {
-            val indice = listaDeCards.indexOf(cardActual)
-            cardActual = listaDeCards[indice + 1]
+    private fun updateNextService() {
+        cardActual = if (cardActual != cards.last()) {
+            val index = cards.indexOf(cardActual)
+            cards[index + 1]
         } else
-            cardActual = listaDeCards.first()
+            cards.first()
     }
 
     private fun notifyOpenURLAction() {
@@ -119,8 +118,8 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun initMoreDetailsInfo(cards: List<Card>) {
-        listaDeCards = cards
-        cardActual = listaDeCards.first()
+        this.cards = cards
+        cardActual = cards.first()
         updateMoreDetailsInfo(cardActual)
     }
 
@@ -150,7 +149,7 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
             }
             else -> {
                 sourceActual.text = HtmlCompat.fromHtml(
-                    "Indefinido", HtmlCompat.FROM_HTML_MODE_LEGACY
+                    "Undefined", HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             }
         }
