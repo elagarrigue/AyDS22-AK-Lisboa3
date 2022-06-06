@@ -6,14 +6,6 @@
     android:layout_height="match_parent">
 
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription=" ">
-
-    </ScrollView>
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
@@ -26,7 +18,7 @@
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <TextView
-        android:id="@+id/sourceActual"
+        android:id="@+id/source"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -46,14 +38,13 @@
         app:layout_constraintTop_toBottomOf="@id/imageView">
 
         <TextView
-            android:id="@+id/textPane2"
+            android:id="@+id/textPane"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:linksClickable="true"
             android:padding="16dp" />
     </ScrollView>
-
 
     <Button
         android:id="@+id/openUrlButton"
@@ -62,9 +53,19 @@
         android:layout_margin="16dp"
         android:text="View Full Article"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/scrollView" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:text="Siguiente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

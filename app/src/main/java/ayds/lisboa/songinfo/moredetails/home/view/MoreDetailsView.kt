@@ -1,17 +1,16 @@
 package ayds.lisboa.songinfo.moredetails.home.view
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.View
+import android.widget.*
+import ayds.lisboa.songinfo.R
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModel
 import ayds.lisboa.songinfo.moredetails.home.model.MoreDetailsModelInjector
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
+import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 import ayds.lisboa.songinfo.utils.UtilsInjector.navigationUtils
 import ayds.observer.Observable
@@ -21,36 +20,40 @@ import com.squareup.picasso.Picasso
 interface MoreDetailsView {
 
     val moreDetailsEventObservable: Observable<MoreDetailsEvent>
-    val moreDetailsState: MoreDetailsState
+    var moreDetailsState: MoreDetailsState
 
     fun openArticleLink(url: String)
 }
 
 class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
-    companion object {
-        const val ARTIST_NAME_EXTRA = "artistName"
-    }
-
     private val onActionSubject = Subject<MoreDetailsEvent>()
     private lateinit var moreDetailsModel: MoreDetailsModel
 
-    private lateinit var sourceActual: TextView
-    private lateinit var imageView: ImageView
-    private lateinit var viewArticleButton: Button
-    private lateinit var descriptionSongPane: TextView
-    private val artistBioParser: ArtistBioParser =
-        MoreDetailsViewInjector.artistBioParser
-    override val moreDetailsEventObservable: Observable<MoreDetailsEvent> = onActionSubject
-    override var moreDetailsState: MoreDetailsState = MoreDetailsState()
+    private lateinit var botonSiguiente: Button
 
+    private lateinit var listaDeCards: List<Card>
+
+    private lateinit var sourceActual: TextView
+
+    private lateinit var descriptionSongPane: TextView
+    private lateinit var imageView: ImageView
+    private lateinit var cardActual: Card
+
+    private lateinit var viewArticleButton: Button
+
+    private val lastFMArtistBioParser: ArtistBioParser =
+        MoreDetailsViewInjector.artistBioParser
+
+    override val moreDetailsEventObservable: Observable<MoreDetailsEvent> = onActionSubject
+
+    override var moreDetailsState: MoreDetailsState = MoreDetailsState()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
 
         initModule()
-        initState()
         initProperties()
         initListeners()
         initObservers()
@@ -60,28 +63,50 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     private fun initModule() {
         MoreDetailsViewInjector.init(this)
         moreDetailsModel = MoreDetailsModelInjector.getMoreDetailsModel()
-    }
 
-    private fun initState() {
-        val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA) ?: ""
-        moreDetailsState = moreDetailsState.copy(artist = artistName)
     }
 
     private fun initProperties() {
-        sourceActual = findViewById(R.id.sourceActual)
-        descriptionSongPane = findViewById(R.id.textPane2)
-        imageView = findViewById(R.id.imageView)
-        viewArticleButton = findViewById(R.id.openUrlButton)
+
+
+        sourceActual =
+            findViewById(R.id.source)
+
+        descriptionSongPane =
+            findViewById(R.id.textPane)
+
+        imageView =
+            findViewById(R.id.imageView)
+
+        viewArticleButton =
+            findViewById(R.id.openUrlButton)
+
+        botonSiguiente =
+            findViewById(R.id.button)
+
     }
 
     private fun initListeners() {
         viewArticleButton.setOnClickListener {
             notifyOpenURLAction()
         }
+        botonSiguiente.setOnClickListener {
+            calcularSiguiente()
+            updateMoreDetailsInfo(cardActual)
+        }
+
     }
 
     override fun openArticleLink(url: String) {
         navigationUtils.openExternalUrl(this, url)
+    }
+
+    private fun calcularSiguiente() {
+        if (cardActual != listaDeCards.last()) {
+            val indice = listaDeCards.indexOf(cardActual)
+            cardActual = listaDeCards[indice + 1]
+        } else
+            cardActual = listaDeCards.first()
     }
 
     private fun notifyOpenURLAction() {
@@ -90,7 +115,13 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun initObservers() {
         moreDetailsModel.cardObservable
-            .subscribe { value -> updateMoreDetailsInfo(value) }
+            .subscribe { value -> initMoreDetailsInfo(value) }
+    }
+
+    private fun initMoreDetailsInfo(cards: List<Card>) {
+        listaDeCards = cards
+        cardActual = listaDeCards.first()
+        updateMoreDetailsInfo(cardActual)
     }
 
     private fun updateMoreDetailsInfo(card: Card) {
@@ -101,24 +132,24 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun updateSourceLabel(card: Card) {
-        when(card.source) {
+        when (card.source) {
             Source.WIKIPEDIA -> {
-                sourceActual.text=HtmlCompat.fromHtml(
+                sourceActual.text = HtmlCompat.fromHtml(
                     "Wikipedia", HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             }
-            Source.LASTFM  -> {
-                sourceActual.text=HtmlCompat.fromHtml(
+            Source.LASTFM -> {
+                sourceActual.text = HtmlCompat.fromHtml(
                     "LastFm", HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             }
-            Source.NEW_YORK_TIMES  -> {
-                sourceActual.text=HtmlCompat.fromHtml(
+            Source.NEW_YORK_TIMES -> {
+                sourceActual.text = HtmlCompat.fromHtml(
                     "New York Times", HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             }
             else -> {
-                sourceActual.text=HtmlCompat.fromHtml(
+                sourceActual.text = HtmlCompat.fromHtml(
                     "Indefinido", HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             }
@@ -148,31 +179,32 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun updateSongMoreDetailsState(card: Card) {
+
         moreDetailsState = moreDetailsState.copy(
             artist = card.name,
-            bio = artistBioParser.parseArtistBioToDisplayableHtml(card),
+            bio = lastFMArtistBioParser.parseArtistBioToDisplayableHtml(card),
             url = card.infoUrl,
-            actionsEnabled = true
+            source = card.source,
+            imageUrl = card.sourceLogoUrl
         )
+
     }
 
     private fun updateNoResultsMoreDetailsState() {
+
         moreDetailsState = moreDetailsState.copy(
             artist = "",
             bio = "",
             url = "",
-            actionsEnabled = true
+            imageUrl = ""
         )
+
     }
 
     private fun searchAction() {
-        updateDisabledActionsState()
         notifySearchArtist()
     }
 
-    private fun updateDisabledActionsState() {
-        moreDetailsState = moreDetailsState.copy(actionsEnabled = false)
-    }
 
     private fun notifySearchArtist() {
         onActionSubject.notify(MoreDetailsEvent.SearchArtist)
