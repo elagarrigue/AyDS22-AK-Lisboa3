@@ -25,6 +25,7 @@ internal class MoreDetailsControllerImpl(
             when (value) {
                 MoreDetailsEvent.SearchArtist -> searchArtist()
                 MoreDetailsEvent.OpenURL -> openSongUrl()
+                MoreDetailsEvent.NextCard -> nextCard()
             }
         }
     private fun searchArtist() {
@@ -36,6 +37,10 @@ internal class MoreDetailsControllerImpl(
 
     private fun openSongUrl() {
         moreDetailsView.openArticleLink(moreDetailsView.moreDetailsState.url)
+    }
+
+    private fun nextCard() {
+        moreDetailsModel.nextCard()
     }
 }
 

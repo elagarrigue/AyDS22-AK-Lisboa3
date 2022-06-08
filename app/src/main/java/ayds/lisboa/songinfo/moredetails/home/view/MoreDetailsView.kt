@@ -34,13 +34,10 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private lateinit var next: Button
 
-    private lateinit var cards: List<Card>
-
     private lateinit var sourceActual: TextView
 
     private lateinit var descriptionSongPane: TextView
     private lateinit var imageView: ImageView
-    private lateinit var cardActual: Card
 
     private lateinit var viewArticleButton: Button
 
@@ -99,22 +96,16 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
             notifyOpenURLAction()
         }
         next.setOnClickListener {
-            updateNextService()
-            updateMoreDetailsInfo(cardActual)
+            notifyNextCardAction()
         }
+    }
 
+    private fun notifyNextCardAction() {
+        onActionSubject.notify(MoreDetailsEvent.NextCard)
     }
 
     override fun openArticleLink(url: String) {
         navigationUtils.openExternalUrl(this, url)
-    }
-
-    private fun updateNextService() {
-        cardActual = if (cardActual != cards.last()) {
-            val index = cards.indexOf(cardActual)
-            cards[index + 1]
-        } else
-            cards.first()
     }
 
     private fun notifyOpenURLAction() {
@@ -123,16 +114,11 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
 
     private fun initObservers() {
         moreDetailsModel.cardObservable
-            .subscribe { value -> initMoreDetailsInfo(value) }
-    }
-
-    private fun initMoreDetailsInfo(cards: List<Card>) {
-        this.cards = cards
-        cardActual = cards.first()
-        updateMoreDetailsInfo(cardActual)
+            .subscribe { card -> updateMoreDetailsInfo(card) }
     }
 
     private fun updateMoreDetailsInfo(card: Card) {
+        if (card is EmptyCard) return // TODO(remove: maybe more details model could return the first card when no card is left)
         updateMoreDetailsState(card)
         updateSourceLabel()
         updateDescriptionSongPane()
