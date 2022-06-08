@@ -30,7 +30,7 @@ internal class MoreDetailsControllerImpl(
     private fun searchArtist() {
         // Warning: Never use Thread in android! Use coroutines
         Thread {
-            moreDetailsModel.searchCard(moreDetailsView.moreDetailsState.artist)
+            moreDetailsModel.searchCards(moreDetailsView.moreDetailsState.artist)
         }.start()
     }
 
