@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.home.model
 
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.repository.CardRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
