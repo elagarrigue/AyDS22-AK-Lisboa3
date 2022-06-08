@@ -4,30 +4,20 @@ import ayds.lisboa.lastfmdata.lastfm.LastFMService
 import ayds.lisboa.lastfmdata.lastfm.entities.LastFMArtist
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Card
 import ayds.lisboa.songinfo.moredetails.home.model.entities.CardImpl
-import ayds.lisboa.songinfo.moredetails.home.model.entities.EmptyCard
 import ayds.lisboa.songinfo.moredetails.home.model.entities.Source
 
 internal class LastFMProxy(private val lastFMService: LastFMService) : ProxyService {
 
-    override fun getCard(artist: String): Card {
-
-        var artistCard: CardImpl? = null
-
-        try {
-            val serviceInfo: LastFMArtist? = lastFMService.getArtist(artist)
-            serviceInfo?.let {
-                artistCard = createCard(it)
-            }
-
+    override fun getCard(artist: String): Card? {
+        return try {
+            lastFMService.getArtist(artist)?.let { createCard(it) }
         } catch (e: Exception) {
-            artistCard = null
+            null
         }
-
-        return artistCard ?: EmptyCard
     }
 
-    private fun createCard(serviceInfo: LastFMArtist) =
-        CardImpl(
+    private fun createCard(serviceInfo: LastFMArtist): CardImpl {
+        return CardImpl(
             serviceInfo.name,
             serviceInfo.infoUrl,
             serviceInfo.description,
@@ -35,5 +25,5 @@ internal class LastFMProxy(private val lastFMService: LastFMService) : ProxyServ
             Source.LASTFM,
             serviceInfo.sourceLogoUrl
         )
-
+    }
 }
