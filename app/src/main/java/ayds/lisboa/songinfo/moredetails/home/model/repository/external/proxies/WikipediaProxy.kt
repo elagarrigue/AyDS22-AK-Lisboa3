@@ -15,7 +15,7 @@ internal class WikipediaProxy(private val wikipediaService: ExternalRepository) 
         this.artist = artist
 
         return try {
-            wikipediaService.getArtistDescription(artist)?.let { createCard(it) }
+            createCard(wikipediaService.getArtistDescription(artist))
         } catch (e: Exception) {
             null
         }

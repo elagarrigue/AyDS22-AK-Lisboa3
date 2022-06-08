@@ -21,7 +21,7 @@ internal class BrokerImpl(private val proxyList: List<ProxyService>) : Broker {
         return infoList
     }
 
-    private fun insertCardFromProxy(card: Card) {
+    private fun insertCardFromProxy(card: Card?) {
         if (card is CardImpl)
             this.infoList.add(card)
     }
