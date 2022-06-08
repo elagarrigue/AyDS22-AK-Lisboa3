@@ -118,7 +118,6 @@ class MoreDetailsViewActivity : AppCompatActivity(), MoreDetailsView {
     }
 
     private fun updateMoreDetailsInfo(card: Card) {
-        if (card is EmptyCard) return // TODO(remove: maybe more details model could return the first card when no card is left)
         updateMoreDetailsState(card)
         updateSourceLabel()
         updateDescriptionSongPane()

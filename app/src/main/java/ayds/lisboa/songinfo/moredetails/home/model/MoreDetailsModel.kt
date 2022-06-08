@@ -18,21 +18,22 @@ internal class MoreDetailsModelImpl(
 
     override val cardObservable = Subject<Card>()
 
-    private var cards: Iterator<Card> = listOf<Card>().iterator()
+    private var cards: List<Card> = listOf()
+    private var cardIndex = 0
 
     override fun searchCards(name: String) {
         repository.getCardsByName(name).let {
-            cards = it.iterator()
+            cards = it
             nextCard()
         }
     }
 
     override fun nextCard() {
-        cardObservable.notify(
-            if (cards.hasNext())
-                cards.next()
-            else
-                EmptyCard
-        )
+        with(cards) {
+            if (isNotEmpty())
+                cardObservable.notify(
+                    get(cardIndex++ % size)
+                )
+        }
     }
 }
