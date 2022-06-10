@@ -29,10 +29,11 @@ internal class MoreDetailsModelImpl(
 
     override fun nextCard() {
         with(cards) {
-            if (isNotEmpty())
-                cardObservable.notify(
-                    get(cardIndex++ % size)
-                )
+            if (isNotEmpty()) {
+                val cardToNotify = get(cardIndex)
+                cardObservable.notify(cardToNotify)
+                cardIndex = (cardIndex + 1) % size
+            }
         }
     }
 }
