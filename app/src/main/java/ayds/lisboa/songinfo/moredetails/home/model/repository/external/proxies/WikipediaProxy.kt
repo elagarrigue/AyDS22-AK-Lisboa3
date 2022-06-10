@@ -8,20 +8,16 @@ import ayds.winchester2.wikipedia.WikipediaArticle
 
 internal class WikipediaProxy(private val wikipediaService: ExternalRepository) : ProxyService {
 
-    lateinit var artist: String
-
     override fun getCard(artist: String): Card? {
 
-        this.artist = artist
-
         return try {
-            createCard(wikipediaService.getArtistDescription(artist))
+            createCard(wikipediaService.getArtistDescription(artist), artist)
         } catch (e: Exception) {
             null
         }
     }
 
-    private fun createCard(serviceInfo: WikipediaArticle) =
+    private fun createCard(serviceInfo: WikipediaArticle, artist: String) =
         CardImpl(
             artist,
             serviceInfo.source,
